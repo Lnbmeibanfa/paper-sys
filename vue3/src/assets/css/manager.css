@@ -1,0 +1,50 @@
+header {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  height: 60px;
+}
+header .logo img {
+  width: 40px;
+  height: 40px;
+}
+header .logo-box {
+  width: 300px;
+  display: flex;
+  align-items: center;
+}
+
+header .title {
+  height: 30px;
+  line-height: 30px;
+  margin-left: 5px;
+}
+header .bread-crumb {
+  flex: 1;
+}
+header .user-box {
+  width: 200px;
+}
+.account .user {
+  display: flex;
+}
+.account .user img {
+  width: 30px;
+  height: 30px;
+}
+.account-box {
+  display: flex;
+}
+/** element元素样式 */
+.el-breadcrumb__item {
+  font-size: 20px;
+}
+.example-showcase .el-dropdown-link {
+  cursor: pointer;
+  color: var(--el-color-primary);
+  display: flex;
+  align-items: center;
+}
+.el-dropdown:hover {
+  border: none;
+}

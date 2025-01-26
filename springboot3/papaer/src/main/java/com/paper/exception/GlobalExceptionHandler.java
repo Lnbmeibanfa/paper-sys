@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public Result error(CustomException e) {
         log.error("异常信息：" + e);
-        return Result.error(e.getCode(), e.getMsg());
+        return Result.error(e.getMsg(), e.getCode());
     }
 
 }

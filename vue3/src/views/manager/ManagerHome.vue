@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-  <RouterView />
+  <div>这里是home</div>
 </template>
 
 <style scoped></style>
