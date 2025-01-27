@@ -1,20 +1,23 @@
 header {
+  background-color: #ffffff;
   display: flex;
   align-items: center;
   padding: 10px 20px;
   height: 60px;
+  margin-bottom: 2px;
 }
 header .logo img {
   width: 40px;
   height: 40px;
 }
 header .logo-box {
-  width: 300px;
+  width: 200px;
   display: flex;
   align-items: center;
 }
 
 header .title {
+  font-size: 20px;
   height: 30px;
   line-height: 30px;
   margin-left: 5px;
@@ -27,17 +30,38 @@ header .user-box {
 }
 .account .user {
   display: flex;
+  align-items: center;
 }
 .account .user img {
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 5px;
 }
 .account-box {
   display: flex;
+  align-items: center;
+}
+.message {
+  font-size: 20px;
+  margin-right: 20px;
+}
+main {
+  display: flex;
+}
+nav {
+  width: 250px;
+  /* TODO控制导航栏长度 */
+  height: 100vh;
+  background-color: white;
+}
+.main-content {
+  width: 100%;
+  padding: 10px;
 }
 /** element元素样式 */
 .el-breadcrumb__item {
-  font-size: 20px;
+  font-size: 16px;
 }
 .example-showcase .el-dropdown-link {
   cursor: pointer;
@@ -45,6 +69,6 @@ header .user-box {
   display: flex;
   align-items: center;
 }
-.el-dropdown:hover {
-  border: none;
+.el-sub-menu__title:hover {
+  background-color: #d4ecff;
 }
