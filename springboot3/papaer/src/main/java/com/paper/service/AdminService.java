@@ -35,4 +35,15 @@ public class AdminService {
         List<Admin> list = adminMapper.selectByPage(admin);
         return PageInfo.of(list);
     }
+
+
+    public void deleteById(Integer id) {
+        adminMapper.delete(id);
+    }
+
+    public void deleteBatch(List<Integer> ids) {
+        for (Integer id : ids) {
+            deleteById(id);
+        }
+    }
 }

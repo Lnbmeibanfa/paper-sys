@@ -15,4 +15,6 @@ public interface AdminMapper {
     void add(Admin admin);
 
     List<Admin> selectByPage(Admin admin);
+
+    void delete(Integer id);
 }

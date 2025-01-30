@@ -21,6 +21,12 @@
             <if test="avatar != null">#{avatar},</if>
         </trim>
     </insert>
+    <delete id="delete">
+        delete
+        from `admin`
+        where id = #{id};
+    </delete>
+
     <select id="selectByPage">
         select * from `admin`
         <where>

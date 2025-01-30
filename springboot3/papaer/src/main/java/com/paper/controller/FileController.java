@@ -57,7 +57,7 @@ public class FileController {
     }
 
 
-    @GetMapping("/download/${fileName}")
+    @GetMapping("/download/{fileName}")
     public void download(@PathVariable String fileName, HttpServletResponse response) {
         OutputStream os;
         try {

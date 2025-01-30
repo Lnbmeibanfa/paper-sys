@@ -1,7 +1,8 @@
 <script setup>
-import { reactive, onMounted } from 'vue'
-import { addAdminAPI, selectAdminDataAPI } from '@/api/admin'
-import { ElMessage } from 'element-plus'
+import { reactive, onMounted, ref } from 'vue'
+import { addAdminAPI, selectAdminDataAPI, deleteByIdAPI, deleteBatchAPI } from '@/api/admin'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { genFileId } from 'element-plus'
 
 // 图片访问地址
 const baseUrl = import.meta.env.VITE_BASE_URL
@@ -15,15 +16,68 @@ const beforeUpload = (file) => {
     return true
   }
 }
-
+const upload = ref()
 const data = reactive({
   adminData: [],
   dialogVisible: false,
   formData: {},
+  fileList: [],
+  isupload: false,
   keyword: '',
+  selectedIds: [],
 })
 const add = () => {
+  data.formData = {}
+  data.fileList = []
+  data.isupload = false
   data.dialogVisible = true
+}
+const delBatch = () => {
+  ElMessageBox.confirm('删除后数据不可恢复', '确认删除', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(() => {
+      deleteBatchAPI(data.selectedIds).then((res) => {
+        res.code === '200' ? ElMessage.success('删除成功') : ElMessage.error('删除失败')
+        loadAdminData()
+      })
+    })
+    .catch((err) => console.log(err))
+}
+const hanleDeleteRow = (row) => {
+  ElMessageBox.confirm('删除后数据不可恢复', '确认删除', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(() => {
+      deleteByIdAPI(row.id).then((res) => {
+        res.code === '200' ? ElMessage.success('删除成功') : ElMessage.error('删除失败')
+        loadAdminData()
+      })
+    })
+    .catch((err) => console.log(err))
+}
+const hanleUpdateRow = (row) => {
+  data.formData = {}
+  data.fileList = []
+  data.isupload = false
+  data.formData = JSON.parse(JSON.stringify(row))
+  data.dialogVisible = true
+}
+const handleSelectionChange = (selectedRows) => {
+  data.selectedIds = selectedRows.map((row) => row.id)
+}
+const handleExceed = (files) => {
+  upload.value.clearFiles()
+  const file = files[0]
+  file.uid = genFileId()
+  upload.value.handleStart(file)
+}
+const handleSuccess = (res) => {
+  data.formData.avatar = res.data
 }
 const loadAdminData = (name) => {
   selectAdminDataAPI(name).then((res) => {
@@ -37,18 +91,25 @@ const loadAdminData = (name) => {
 const reset = () => {}
 const search = () => {}
 const save = () => {
+  if (data.fileList.length !== 0 && !data.isupload) {
+    ElMessage.warning('您选择了头像却没有上传')
+    return
+  }
   addAdminAPI(data.formData).then((res) => {
     console.log(res)
     if (res.code === '200') {
       ElMessage.success('添加成功')
+      loadAdminData()
     } else {
       ElMessage.error(res.msg)
     }
   })
   data.dialogVisible = false
-  loadAdminData()
 }
-const del = () => {}
+const submitUpload = () => {
+  upload.value.submit()
+  data.isupload = true
+}
 onMounted(() => {
   loadAdminData()
 })
@@ -64,13 +125,44 @@ onMounted(() => {
   </div>
   <div class="operation card">
     <el-button type="primary" size="default" @click="add">新增</el-button>
-    <el-button type="danger" size="default" @click="del">删除</el-button>
+    <el-button type="danger" size="default" @click="delBatch">删除</el-button>
   </div>
   <div class="display card">
-    <el-table :data="data.adminData" stripe style="width: 100%">
-      <el-table-column prop="username" label="账号" width="180" />
-      <el-table-column prop="name" label="昵称" width="180" />
-      <el-table-column prop="avatar" label="头像" />
+    <el-table
+      :data="data.adminData"
+      stripe
+      style="width: 100%"
+      @selection-change="handleSelectionChange"
+    >
+      <el-table-column type="selection" width="55" />
+      <el-table-column prop="username" label="账号" />
+      <el-table-column prop="name" label="昵称" />
+      <el-table-column prop="avatar" label="头像">
+        <template #default="scope">
+          <el-image
+            style="width: 40px; height: 40px; border-radius: 50%"
+            :preview-src-list="[scope.row.avatar]"
+            :preview-teleported="true"
+            :src="scope.row.avatar"
+          ></el-image>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作">
+        <template #default="scope">
+          <el-button
+            type="primary"
+            icon="Edit"
+            circle
+            @click="hanleUpdateRow(scope.row)"
+          ></el-button>
+          <el-button
+            type="danger"
+            icon="Delete"
+            circle
+            @click="hanleDeleteRow(scope.row)"
+          ></el-button>
+        </template>
+      </el-table-column>
     </el-table>
   </div>
   <div class="pagination card">
@@ -87,15 +179,20 @@ onMounted(() => {
       </el-form-item>
       <el-form-item label="头像">
         <el-upload
+          ref="upload"
           :before-upload="beforeUpload"
           :action="baseUrl + '/files/upload'"
+          v-model:file-list="data.fileList"
+          list-type="picture"
           :limit="1"
+          :on-success="handleSuccess"
           :on-exceed="handleExceed"
           :auto-upload="false"
         >
           <template #trigger>
-            <el-button type="primary">select file</el-button>
+            <el-button type="primary">选择图片</el-button>
           </template>
+          <el-button style="margin-left: 5px" type="success" @click="submitUpload">上传</el-button>
         </el-upload>
       </el-form-item>
     </el-form>

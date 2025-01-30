@@ -1,6 +1,4 @@
-<script setup>
-import { ElBreadcrumb } from 'element-plus'
-</script>
+<script setup></script>
 
 <template>
   <div class="back-end-management backgroud">
