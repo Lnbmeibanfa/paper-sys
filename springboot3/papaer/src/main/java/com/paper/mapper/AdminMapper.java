@@ -7,14 +7,20 @@ import java.util.List;
 
 /**
  * @author 林万奇
- * @since 2025-01-26
+ * @since 2025-01-30
  */
 @Mapper
 public interface AdminMapper {
 
     void add(Admin admin);
 
+    void delete(Integer id);
+
+    void update(Admin admin);
+
     List<Admin> selectByPage(Admin admin);
 
-    void delete(Integer id);
+    Admin selectById(Integer id);
+
+    Admin selectByUsername(String username);
 }

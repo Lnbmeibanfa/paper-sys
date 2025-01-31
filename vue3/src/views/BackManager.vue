@@ -73,7 +73,7 @@
             </template>
             <el-menu-item index="/manager/admin">管理员信息</el-menu-item>
             <el-menu-item index="/manager/student">学生信息</el-menu-item>
-            <el-menu-item index="1-2">教师信息</el-menu-item>
+            <el-menu-item index="/manager/teacher">教师信息</el-menu-item>
           </el-sub-menu>
         </el-menu>
       </nav>

@@ -1,7 +1,6 @@
 import request from '@/utils/request.js'
 
 const addAdminAPI = (data) => {
-  console.log(data)
   return request.post('/admin/add', data)
 }
 
@@ -13,8 +12,12 @@ const deleteBatchAPI = (ids) => {
   return request.delete('/admin/deleteBatch', { data: ids })
 }
 
-const selectAdminDataAPI = () => {
-  return request.get('/admin/selectByPage')
+const updateAdminAPI = (data) => {
+  return request.put('/admin/update', data)
 }
 
-export { addAdminAPI, selectAdminDataAPI, deleteByIdAPI, deleteBatchAPI }
+const selectAdminDataAPI = (pageNum, pageSize, name) => {
+  return request.get('/admin/selectByPage', { params: { pageNum, pageSize, name } })
+}
+
+export { addAdminAPI, selectAdminDataAPI, deleteByIdAPI, deleteBatchAPI, updateAdminAPI }

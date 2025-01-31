@@ -27,10 +27,30 @@
         where id = #{id};
     </delete>
 
-    <select id="selectByPage">
+    <update id="update">
+        update `admin`
+        <set>
+            <if test="username != null">username = #{username},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="role != null">role = #{role},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <select id="selectByPage" resultType="com.paper.entity.Admin">
         select * from `admin`
         <where>
             <if test="name != null">and name like concat('%', #{name},'%')</if>
         </where>
+    </select>
+    <select id="selectById" resultType="com.paper.entity.Admin">
+        select * from `admin` where id = #{id}
+    </select>
+    <select id="selectByUsername" resultType="com.paper.entity.Admin">
+        select * from `admin` where username = #{username}
     </select>
 </mapper>

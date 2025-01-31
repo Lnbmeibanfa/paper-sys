@@ -1,6 +1,12 @@
 <script setup>
 import { reactive, onMounted, ref } from 'vue'
-import { addAdminAPI, selectAdminDataAPI, deleteByIdAPI, deleteBatchAPI } from '@/api/admin'
+import {
+  addAdminAPI,
+  selectAdminDataAPI,
+  deleteByIdAPI,
+  deleteBatchAPI,
+  updateAdminAPI,
+} from '@/api/admin'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { genFileId } from 'element-plus'
 
@@ -17,13 +23,16 @@ const beforeUpload = (file) => {
   }
 }
 const upload = ref()
+const pageNum = ref(1)
+const pageSize = ref(10)
+const total = ref(0)
+const name = ref('')
 const data = reactive({
   adminData: [],
   dialogVisible: false,
   formData: {},
   fileList: [],
   isupload: false,
-  keyword: '',
   selectedIds: [],
 })
 const add = () => {
@@ -79,32 +88,49 @@ const handleExceed = (files) => {
 const handleSuccess = (res) => {
   data.formData.avatar = res.data
 }
-const loadAdminData = (name) => {
-  selectAdminDataAPI(name).then((res) => {
+const loadAdminData = () => {
+  selectAdminDataAPI(pageNum.value, pageSize.value, name.value).then((res) => {
     if (res.code === '200') {
-      data.adminData = res.data.list
+      data.adminData = res.data?.list || []
+      total.value = res.data?.total
     } else {
       ElMessage.error(res.msg)
     }
   })
 }
-const reset = () => {}
-const search = () => {}
+const reset = () => {
+  name.value = ''
+  loadAdminData()
+}
 const save = () => {
   if (data.fileList.length !== 0 && !data.isupload) {
     ElMessage.warning('您选择了头像却没有上传')
     return
   }
+  data.formData.id ? update() : insert()
+  data.dialogVisible = false
+}
+const insert = () => {
   addAdminAPI(data.formData).then((res) => {
-    console.log(res)
     if (res.code === '200') {
       ElMessage.success('添加成功')
+      loadAdminData()
+    } else {
+      console.log(res)
+      ElMessage.error(res.msg)
+    }
+  })
+}
+const update = () => {
+  console.log(data.formData)
+  updateAdminAPI(data.formData).then((res) => {
+    if (res.code === '200') {
+      ElMessage.success('修改成功')
       loadAdminData()
     } else {
       ElMessage.error(res.msg)
     }
   })
-  data.dialogVisible = false
 }
 const submitUpload = () => {
   upload.value.submit()
@@ -118,8 +144,8 @@ onMounted(() => {
 <template>
   <div class="admin-manage">
     <div class="search-box card">
-      <el-input v-model="data.keyword" style="width: 240px" placeholder="请输入" />
-      <el-button type="primary" size="default" @click="search">查询</el-button>
+      <el-input v-model="name" style="width: 240px" placeholder="请输入昵称搜索" />
+      <el-button type="primary" size="default" @click="loadAdminData">查询</el-button>
       <el-button type="warning" size="default" @click="reset">重置</el-button>
     </div>
   </div>
@@ -166,7 +192,14 @@ onMounted(() => {
     </el-table>
   </div>
   <div class="pagination card">
-    <el-pagination background layout="prev, pager, next" :total="2" />
+    <el-pagination
+      background
+      layout="prev, pager, next"
+      :total="total"
+      :page-size="pageSize"
+      v-model:current-page="pageNum"
+      @current-change="loadAdminData"
+    />
   </div>
   <!--dialog-->
   <el-dialog v-model="data.dialogVisible" title="增加管理员" width="700">

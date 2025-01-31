@@ -1,6 +1,6 @@
 <script setup>
 import { reactive, onMounted, ref } from 'vue'
-import { selectStudentDataAPI, deleteByIdAPI } from '@/api/student'
+import { selectTeacherDataAPI, deleteByIdAPI } from '@/api/teacher'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const pageNum = ref(1)
@@ -8,7 +8,7 @@ const pageSize = ref(10)
 const total = ref(0)
 const name = ref('')
 const data = reactive({
-  studentData: [],
+  teacherData: [],
   dialogVisible: false,
   formData: {},
   fileList: [],
@@ -24,7 +24,7 @@ const hanleDeleteRow = (row) => {
     .then(() => {
       deleteByIdAPI(row.id).then((res) => {
         res.code === '200' ? ElMessage.success('删除成功') : ElMessage.error('删除失败')
-        loadStudentData()
+        loadTeacherData()
       })
     })
     .catch((err) => console.log(err))
@@ -39,10 +39,10 @@ const hanleUpdateRow = (row) => {
 const handleSelectionChange = (selectedRows) => {
   data.selectedIds = selectedRows.map((row) => row.id)
 }
-const loadStudentData = () => {
-  selectStudentDataAPI(pageNum.value, pageSize.value, name.value).then((res) => {
+const loadTeacherData = () => {
+  selectTeacherDataAPI(pageNum.value, pageSize.value, name.value).then((res) => {
     if (res.code === '200') {
-      data.studentData = res.data?.list || []
+      data.teacherData = res.data?.list || []
       total.value = res.data?.total
     } else {
       ElMessage.error(res.msg)
@@ -51,24 +51,24 @@ const loadStudentData = () => {
 }
 const reset = () => {
   name.value = ''
-  loadStudentData()
+  loadTeacherData()
 }
 onMounted(() => {
-  loadStudentData()
+  loadTeacherData()
 })
 </script>
 
 <template>
-  <div class="student-manage">
+  <div class="teacher-manage">
     <div class="search-box card">
       <el-input v-model="name" style="width: 240px" placeholder="请输入昵称搜索" />
-      <el-button type="primary" size="default" @click="loadStudentData">查询</el-button>
+      <el-button type="primary" size="default" @click="loadTeacherData">查询</el-button>
       <el-button type="warning" size="default" @click="reset">重置</el-button>
     </div>
   </div>
   <div class="display card">
     <el-table
-      :data="data.studentData"
+      :data="data.teacherData"
       stripe
       style="width: 100%"
       @selection-change="handleSelectionChange"
@@ -118,7 +118,7 @@ onMounted(() => {
       :total="total"
       :page-size="pageSize"
       v-model:current-page="pageNum"
-      @current-change="loadStudentData"
+      @current-change="loadTeacherData"
     />
   </div>
 </template>

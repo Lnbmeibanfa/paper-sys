@@ -9,11 +9,5 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class Admin {
-    private String avatar;
-    private String name;
-    private Integer id;
-    private String role;
-    private String password;
-    private String username;
+public class Admin extends Account{
 }

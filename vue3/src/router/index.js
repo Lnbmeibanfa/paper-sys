@@ -15,6 +15,7 @@ const router = createRouter({
         { path: 'home', component: () => import('@/views/manager/ManagerHome.vue') },
         { path: 'student', component: () => import('@/views/manager/ManagerStudent.vue') },
         { path: 'admin', component: () => import('@/views/manager/ManagerAdmin.vue') },
+        { path: 'teacher', component: () => import('@/views/manager/ManagerTeacher.vue') },
       ],
     },
   ],

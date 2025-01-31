@@ -40,4 +40,10 @@ public class Result {
         result.setMsg(msg);
         return result;
     }
+    public static Result error() {
+        Result result = new Result();
+        result.setCode("500");
+        result.setMsg("请求失败");
+        return result;
+    }
 }

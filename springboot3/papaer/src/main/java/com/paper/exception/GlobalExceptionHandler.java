@@ -19,9 +19,14 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     @ResponseBody
-    public Result error(CustomException e) {
-        log.error("异常信息：" + e);
-        return Result.error(e.getMsg(), e.getCode());
+    public Result error(Exception e) {
+        log.error("异常信息：", e);
+        return Result.error();
     }
-
+    @ExceptionHandler(CustomException.class)
+    @ResponseBody
+    public Result error(CustomException e) {
+        log.error("异常信息：", e);
+        return Result.error(e.getCode(), e.getMsg());
+    }
 }

@@ -4,7 +4,9 @@ import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.paper.common.ResultCodeEnum;
 import com.paper.entity.Admin;
+import com.paper.exception.CustomException;
 import com.paper.mapper.AdminMapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,10 @@ public class AdminService {
     AdminMapper adminMapper;
 
     public void add(Admin admin) {
+        Admin dbAdmin = adminMapper.selectByUsername(admin.getUsername());
+        if (ObjectUtil.isNotNull(dbAdmin)) {
+            throw new CustomException(ResultCodeEnum.USER_EXIST_ERROR);
+        }
         if (ObjectUtil.isEmpty(admin.getRole())) {
             admin.setRole("ADMIN");
         }
@@ -45,5 +51,16 @@ public class AdminService {
         for (Integer id : ids) {
             deleteById(id);
         }
+    }
+
+    public void update(Admin admin) {
+        if (ObjectUtil.isNull(admin.getId())) {
+            throw new CustomException(ResultCodeEnum.USER_NOT_EXIST_ERROR);
+        }
+        Admin dbAdmin = adminMapper.selectById(admin.getId());
+        if (ObjectUtil.isEmpty(dbAdmin)) {
+            throw new CustomException(ResultCodeEnum.USER_NOT_EXIST_ERROR);
+        }
+        adminMapper.update(admin);
     }
 }
