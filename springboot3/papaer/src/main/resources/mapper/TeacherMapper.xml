@@ -68,4 +68,10 @@
             <if test="name != null">and name like concat('%', #{name},'%')</if>
         </where>
     </select>
+    <select id="selectById" resultType="com.paper.entity.Teacher">
+        select * from `teacher` where id = #{id}
+    </select>
+    <select id="selectByUsername" resultType="com.paper.entity.Teacher">
+        select * from `teacher` where username = #{username}
+    </select>
 </mapper>

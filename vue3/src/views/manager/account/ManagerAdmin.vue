@@ -26,7 +26,7 @@ const upload = ref()
 const pageNum = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
-const name = ref('')
+const name = ref()
 const data = reactive({
   adminData: [],
   dialogVisible: false,
@@ -99,7 +99,7 @@ const loadAdminData = () => {
   })
 }
 const reset = () => {
-  name.value = ''
+  name.value = null
   loadAdminData()
 }
 const save = () => {

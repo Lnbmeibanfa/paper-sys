@@ -6,7 +6,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 const pageNum = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
-const name = ref('')
+const name = ref(null)
 const data = reactive({
   studentData: [],
   dialogVisible: false,
@@ -50,7 +50,7 @@ const loadStudentData = () => {
   })
 }
 const reset = () => {
-  name.value = ''
+  name.value = null
   loadStudentData()
 }
 onMounted(() => {
@@ -76,12 +76,10 @@ onMounted(() => {
       <el-table-column type="selection" width="55" />
       <el-table-column prop="username" label="账号" />
       <el-table-column prop="name" label="昵称" />
-      <el-table-column prop="address" label="办公地址" />
       <el-table-column prop="phone" label="电话号码" />
       <el-table-column prop="wechat" label="微信号" />
       <el-table-column prop="QQ" label="QQ号" />
       <el-table-column prop="email" label="电子邮箱" />
-      <el-table-column prop="researchDirection" label="研究方向" />
       <el-table-column prop="status" label="审核状态" />
       <el-table-column prop="avatar" label="头像">
         <template #default="scope">

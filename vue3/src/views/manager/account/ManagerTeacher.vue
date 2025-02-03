@@ -6,7 +6,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 const pageNum = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
-const name = ref('')
+const name = ref(null)
 const data = reactive({
   teacherData: [],
   dialogVisible: false,
@@ -50,7 +50,7 @@ const loadTeacherData = () => {
   })
 }
 const reset = () => {
-  name.value = ''
+  name.value = null
   loadTeacherData()
 }
 onMounted(() => {

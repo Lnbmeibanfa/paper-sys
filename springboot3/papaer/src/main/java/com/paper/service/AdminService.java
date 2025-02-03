@@ -1,13 +1,14 @@
 package com.paper.service;
 
 import cn.hutool.core.util.ObjectUtil;
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.paper.common.ResultCodeEnum;
+import com.paper.entity.Account;
 import com.paper.entity.Admin;
 import com.paper.exception.CustomException;
 import com.paper.mapper.AdminMapper;
+import com.paper.util.JWTUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -63,4 +64,22 @@ public class AdminService {
         }
         adminMapper.update(admin);
     }
+
+    public Admin selectById(Integer id) {
+        return adminMapper.selectById(id);
+    }
+
+    public Account login(Account account) {
+        Admin dbAdmin = adminMapper.selectByUsername(account.getUsername());
+        if (ObjectUtil.isNull(dbAdmin)) {
+            throw new CustomException(ResultCodeEnum.USER_NOT_EXIST_ERROR);
+        } else if (!dbAdmin.getPassword().equals(account.getPassword())) {
+            throw new CustomException(ResultCodeEnum.PARAM_PASSWORD_ERROR);
+        }
+        // token
+        String token = JWTUtil.createJWT(dbAdmin.getId() + "-" + dbAdmin.getRole(), dbAdmin.getPassword());
+        dbAdmin.setToken(token);
+        return dbAdmin;
+    }
+
 }

@@ -1,4 +1,7 @@
-<script setup></script>
+<script setup>
+import { useRoute } from 'vue-router'
+const route = useRoute()
+</script>
 
 <template>
   <div class="back-end-management backgroud">
@@ -12,7 +15,7 @@
       <div class="bread-crumb">
         <el-breadcrumb separator="/">
           <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-          <el-breadcrumb-item>页面1</el-breadcrumb-item>
+          <el-breadcrumb-item>{{ route.meta.name }}</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
       <div class="account">
@@ -40,36 +43,22 @@
     </header>
     <main>
       <nav>
-        <el-menu default-active="3" class="el-menu-vertical-demo" router>
-          <el-sub-menu index="1">
+        <el-menu default-active="/manager/home" class="el-menu-vertical-demo" router>
+          <el-menu-item index="/manager/home">
+            <el-icon><House /></el-icon>
+            <span>系统首页</span>
+          </el-menu-item>
+          <el-sub-menu index="/manager/topicType">
             <template #title>
-              <el-icon><location /></el-icon>
-              <span>Navigator One</span>
-            </template>
-            <el-menu-item-group title="Group One">
-              <el-menu-item index="1-1">item one</el-menu-item>
-              <el-menu-item index="1-2">item two</el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group title="Group Two">
-              <el-menu-item index="1-3">item three</el-menu-item>
-            </el-menu-item-group>
-            <el-sub-menu index="1-4">
-              <template #title>item four</template>
-              <el-menu-item index="1-4-1">item one</el-menu-item>
-            </el-sub-menu>
-          </el-sub-menu>
-          <el-sub-menu index="2">
-            <template #title>
-              <el-icon><location /></el-icon>
+              <el-icon><DocumentCopy /></el-icon>
               <span>信息管理</span>
             </template>
-            <el-menu-item index="1-1">item one</el-menu-item>
-            <el-menu-item index="1-2">item two</el-menu-item>
+            <el-menu-item index="/manager/topicType">论文选题类型管理</el-menu-item>
           </el-sub-menu>
-          <el-sub-menu index="3">
+          <el-sub-menu index="/manager/admin">
             <template #title>
-              <el-icon><location /></el-icon>
-              <span>信息管理</span>
+              <el-icon><User /></el-icon>
+              <span>用户管理</span>
             </template>
             <el-menu-item index="/manager/admin">管理员信息</el-menu-item>
             <el-menu-item index="/manager/student">学生信息</el-menu-item>

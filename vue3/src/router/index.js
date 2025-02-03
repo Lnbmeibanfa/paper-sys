@@ -12,12 +12,38 @@ const router = createRouter({
       name: 'manager',
       component: () => import('@/views/BackManager.vue'),
       children: [
-        { path: 'home', component: () => import('@/views/manager/ManagerHome.vue') },
-        { path: 'student', component: () => import('@/views/manager/ManagerStudent.vue') },
-        { path: 'admin', component: () => import('@/views/manager/ManagerAdmin.vue') },
-        { path: 'teacher', component: () => import('@/views/manager/ManagerTeacher.vue') },
+        {
+          path: 'home',
+          component: () => import('@/views/manager/ManagerHome.vue'),
+          meta: { name: '系统首页' },
+        },
+        // 用户管理页面
+        {
+          path: 'student',
+          component: () => import('@/views/manager/account/ManagerStudent.vue'),
+          meta: { name: '学生信息' },
+        },
+        {
+          path: 'admin',
+          component: () => import('@/views/manager/account/ManagerAdmin.vue'),
+          meta: { name: '管理员信息' },
+        },
+        {
+          path: 'teacher',
+          component: () => import('@/views/manager/account/ManagerTeacher.vue'),
+          meta: { name: '教师信息' },
+        },
+        // 信息管理页面
+        {
+          path: 'topicType',
+          component: () => import('@/views/manager/information/ManagerTopicType.vue'),
+          meta: { name: '论文题目类型' },
+        },
       ],
     },
+    { path: '/login', component: () => import('@/views/login/AccountLogin.vue') },
+    { path: '/404', component: () => import('@/views/global/invalidPage404.vue') },
+    { path: '/:pathMatch(.*)', redirect: '/404' },
   ],
 })
 

@@ -1,0 +1,41 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.paper.mapper.TopicTypeMapper">
+    <insert id="add">
+        insert into `topic_type`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="type != null">type,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="type != null">#{type},</if>
+        </trim>
+    </insert>
+    <delete id="delete">
+        delete
+        from `topic_type`
+        where id = #{id};
+    </delete>
+
+    <update id="update">
+        update `topicType`
+        <set>
+            <if test="username != null">type = #{type},</if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <select id="selectByPage" resultType="com.paper.entity.TopicType">
+        select * from `topic_type`
+        <where>
+            <if test="type != null">and type like concat('%', #{type},'%')</if>
+        </where>
+    </select>
+    <select id="selectById" resultType="com.paper.entity.TopicType">
+        select * from `topic_type` where id = #{id}
+    </select>
+</mapper>
