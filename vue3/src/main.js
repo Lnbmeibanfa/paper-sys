@@ -13,9 +13,8 @@ const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
-
-app.use(ElementPlus)
 app.use(createPinia().use(createPersistedState()))
+app.use(ElementPlus)
 app.use(router)
 
 app.mount('#app')

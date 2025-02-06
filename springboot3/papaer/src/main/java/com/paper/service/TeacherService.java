@@ -76,7 +76,7 @@ public class TeacherService {
         }
         // token
         String token = JWTUtil.createJWT(dbTeacher.getId() + "-" + dbTeacher.getRole(), dbTeacher.getPassword());
-        account.setToken(token);
-        return account;
+        dbTeacher.setToken(token);
+        return dbTeacher;
     }
 }

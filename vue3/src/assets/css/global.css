@@ -1,5 +1,5 @@
 :root {
-  --backgroud-color: #f4f4f7;
+  --background-color: #f4f4f7;
 }
 
 * {
@@ -25,8 +25,8 @@ a {
   margin-bottom: 5px;
 }
 
-.backgroud {
-  background-color: var(--backgroud-color);
+.background {
+  background-color: var(--background-color);
   height: 100vh;
 }
 

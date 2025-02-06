@@ -79,7 +79,7 @@ onMounted(() => {
       <el-table-column prop="address" label="办公地址" />
       <el-table-column prop="phone" label="电话号码" />
       <el-table-column prop="wechat" label="微信号" />
-      <el-table-column prop="QQ" label="QQ号" />
+      <el-table-column prop="qq" label="qq号" />
       <el-table-column prop="email" label="电子邮箱" />
       <el-table-column prop="researchDirection" label="研究方向" />
       <el-table-column prop="status" label="审核状态" />

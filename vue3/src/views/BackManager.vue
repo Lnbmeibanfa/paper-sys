@@ -1,10 +1,11 @@
 <script setup>
+import router from '@/router'
 import { useRoute } from 'vue-router'
 const route = useRoute()
 </script>
 
 <template>
-  <div class="back-end-management backgroud">
+  <div class="back-end-management background">
     <header>
       <div class="logo-box">
         <div class="logo">
@@ -32,8 +33,10 @@ const route = useRoute()
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item>Action 1</el-dropdown-item>
-                  <el-dropdown-item>Action 2</el-dropdown-item>
+                  <el-dropdown-item>个人资料</el-dropdown-item>
+                  <el-dropdown-item @click="router.push({ name: 'login' })"
+                    >退出登录</el-dropdown-item
+                  >
                 </el-dropdown-menu>
               </template>
             </el-dropdown>

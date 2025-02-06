@@ -5,6 +5,7 @@ import com.paper.common.Result;
 import com.paper.entity.Teacher;
 import com.paper.service.TeacherService;
 import jakarta.annotation.Resource;
+import lombok.Getter;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -64,5 +65,13 @@ public class TeacherController {
                                 @RequestParam(defaultValue = "1") Integer pageNum) {
         PageInfo<Teacher> pageInfo =teacherService.selectByPage(teacher, pageSize, pageNum);
         return Result.success(pageInfo);
+    }
+    /**
+     * 根据id查询teacher
+     */
+    @GetMapping("/selectById")
+    public Result selectById(@RequestParam Integer id) {
+        Teacher teacher = teacherService.selectById(id);
+        return Result.success(teacher);
     }
 }

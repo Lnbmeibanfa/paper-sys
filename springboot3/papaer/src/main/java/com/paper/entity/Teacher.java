@@ -13,7 +13,7 @@ public class Teacher extends Account {
     private String address;
     private String phone;
     private String wechat;
-    private String QQ;
+    private String qq;
     private String email;
     private String researchDirection;
     private String status;

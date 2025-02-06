@@ -14,7 +14,7 @@
             <if test="address != null">address,</if>
             <if test="phone != null">phone,</if>
             <if test="wechat != null">wechat,</if>
-            <if test="QQ != null">QQ,</if>
+            <if test="qq != null">qq,</if>
             <if test="email != null">email,</if>
             <if test="researchDirection != null">research_direction,</if>
             <if test="status != null">status,</if>
@@ -29,7 +29,7 @@
             <if test="address != null">#{address},</if>
             <if test="phone != null">#{phone},</if>
             <if test="wechat != null">#{wechat},</if>
-            <if test="QQ != null">#{QQ},</if>
+            <if test="qq != null">#{qq},</if>
             <if test="email != null">#{email},</if>
             <if test="researchDirection != null">#{researchDirection},</if>
             <if test="status != null">#{status},</if>
@@ -52,7 +52,7 @@
             <if test="address != null">address = #{address},</if>
             <if test="phone != null">phone = #{phone},</if>
             <if test="wechat != null">wechat = #{wechat},</if>
-            <if test="QQ != null">QQ = #{QQ},</if>
+            <if test="qq != null">qq = #{qq},</if>
             <if test="email != null">email = #{email},</if>
             <if test="researchDirection != null">research_direction = #{researchDirection},</if>
             <if test="status != null">status = #{status},</if>

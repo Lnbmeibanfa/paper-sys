@@ -41,7 +41,16 @@ const router = createRouter({
         },
       ],
     },
-    { path: '/login', component: () => import('@/views/login/AccountLogin.vue') },
+    {
+      path: '/teacher',
+      name: 'teacher',
+      component: () => import('@/views/FrontTeacher.vue'),
+      children: [
+        { path: 'home', component: () => import('@/views/teacher/TeacherHome.vue'), name: 'home' },
+        { path: 'self', component: () => import('@/views/teacher/TeacherSelf.vue'), name: 'self' },
+      ],
+    },
+    { path: '/login', name: 'login', component: () => import('@/views/login/AccountLogin.vue') },
     { path: '/404', component: () => import('@/views/global/invalidPage404.vue') },
     { path: '/:pathMatch(.*)', redirect: '/404' },
   ],

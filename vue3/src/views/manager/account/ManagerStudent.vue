@@ -78,7 +78,7 @@ onMounted(() => {
       <el-table-column prop="name" label="昵称" />
       <el-table-column prop="phone" label="电话号码" />
       <el-table-column prop="wechat" label="微信号" />
-      <el-table-column prop="QQ" label="QQ号" />
+      <el-table-column prop="qq" label="qq号" />
       <el-table-column prop="email" label="电子邮箱" />
       <el-table-column prop="status" label="审核状态" />
       <el-table-column prop="avatar" label="头像">

@@ -3,6 +3,7 @@ import { reactive, ref } from 'vue'
 import { loginAPI } from '@/api/login'
 import { ElMessage } from 'element-plus'
 import { useAccountStore } from '@/stores/account'
+import router from '@/router'
 
 const accountStore = useAccountStore()
 const loginForm = ref()
@@ -36,6 +37,9 @@ const login = () => {
         if (res.code === '200') {
           accountStore.setAccountInfo(res.data)
           ElMessage.success('登录成功')
+          if (accountStore.accountInfo.role === 'TEACHER') {
+            router.push({ name: 'teacher' })
+          }
         } else {
           ElMessage.error(res.msg)
         }
@@ -47,7 +51,7 @@ const login = () => {
 
 <template>
   <div class="login">
-    <div class="backgroud">
+    <div class="background">
       <div class="empty-box"></div>
       <div class="login-box">
         <div class="box-bg">
@@ -96,7 +100,7 @@ const login = () => {
 </template>
 
 <style scoped>
-.backgroud {
+.background {
   background: url('@/assets/imgs/loginBg.jpg');
   background-size: cover;
   opacity: 0.8;

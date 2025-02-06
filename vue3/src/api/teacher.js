@@ -20,4 +20,15 @@ const selectTeacherDataAPI = (pageNum, pageSize, name) => {
   return request.get('/teacher/selectByPage', { params: { pageNum, pageSize, name } })
 }
 
-export { addTeacherAPI, selectTeacherDataAPI, deleteByIdAPI, deleteBatchAPI, updateTeacherAPI }
+const selectByIdAPI = (id) => {
+  return request.get('/teacher/selectById', { params: { id } })
+}
+
+export {
+  addTeacherAPI,
+  selectTeacherDataAPI,
+  deleteByIdAPI,
+  deleteBatchAPI,
+  updateTeacherAPI,
+  selectByIdAPI,
+}
