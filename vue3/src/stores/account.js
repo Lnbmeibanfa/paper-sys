@@ -6,7 +6,14 @@ export const useAccountStore = defineStore(
   'account',
   () => {
     const accountInfo = ref({})
-    const setAccountInfo = (data) => {
+    const addAccountInfo = (data) => {
+      for (const each in data) {
+        if (data[each] !== null && data[each] !== undefined) {
+          accountInfo.value[each] = data[each]
+        }
+      }
+    }
+    const cloneAccountInfo = (data) => {
       accountInfo.value = cloneDeep(data)
     }
     const setToken = (token) => {
@@ -15,7 +22,7 @@ export const useAccountStore = defineStore(
     const getToken = () => {
       return accountInfo.value.token
     }
-    return { accountInfo, setAccountInfo, setToken, getToken }
+    return { accountInfo, cloneAccountInfo, addAccountInfo, setToken, getToken }
   },
   {
     persist: true,

@@ -35,10 +35,12 @@ const login = () => {
       loginAPI(userInfo).then((res) => {
         console.log(res)
         if (res.code === '200') {
-          accountStore.setAccountInfo(res.data)
+          accountStore.cloneAccountInfo(res.data)
           ElMessage.success('登录成功')
           if (accountStore.accountInfo.role === 'TEACHER') {
             router.push({ name: 'teacher' })
+          } else if (accountStore.accountInfo.role === 'STUDENT') {
+            router.push({ name: 'student' })
           }
         } else {
           ElMessage.error(res.msg)

@@ -25,7 +25,7 @@ public class StudentService {
 
     public void add(Student student) {
         if (ObjectUtil.isEmpty(student.getRole())) {
-            student.setRole("ADMIN");
+            student.setRole("STUDENT");
         }
         if (ObjectUtil.isEmpty(student.getPassword())) {
             student.setPassword("123456");

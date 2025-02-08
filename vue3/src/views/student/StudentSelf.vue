@@ -1,12 +1,12 @@
 <script setup>
-import { updateTeacherAPI, selectByIdAPI } from '@/api/teacher'
+import { updateStudentAPI, selectByIdAPI } from '@/api/student'
 import EditInfo from '@/views/component/EditInfo.vue'
 import { useAccountStore } from '@/stores/account'
 import { ElMessage } from 'element-plus'
 import { onMounted } from 'vue'
 const baseUrl = import.meta.env.VITE_BASE_URL
 const accountStore = useAccountStore()
-const loadTeacherData = () => {
+const loadStudentData = () => {
   selectByIdAPI(accountStore.accountInfo.id).then((res) => {
     if (res.code === '200') {
       accountStore.addAccountInfo(res.data)
@@ -17,10 +17,10 @@ const loadTeacherData = () => {
 }
 const handleUploadSuccess = (res) => {
   accountStore.accountInfo.avatar = res.data
-  updateTeacherAPI(accountStore.accountInfo).then((res) => {
+  updateStudentAPI(accountStore.accountInfo).then((res) => {
     if (res.code === '200') {
       ElMessage.success('头像上传成功')
-      loadTeacherData()
+      loadStudentData()
     } else {
       ElMessage.error(res.msg)
     }
@@ -28,17 +28,17 @@ const handleUploadSuccess = (res) => {
 }
 const handleSave = (val, key) => {
   accountStore.accountInfo[key] = val
-  updateTeacherAPI(accountStore.accountInfo).then((res) => {
+  updateStudentAPI(accountStore.accountInfo).then((res) => {
     if (res.code === '200') {
       ElMessage.success('修改成功')
-      loadTeacherData()
+      loadStudentData()
     } else {
       ElMessage.error(res.msg)
     }
   })
 }
 onMounted(() => {
-  loadTeacherData()
+  loadStudentData()
 })
 </script>
 
@@ -78,12 +78,6 @@ onMounted(() => {
       />
       <el-divider />
       <edit-info
-        title="办公地址"
-        :content="accountStore.accountInfo.address"
-        @save="(content) => handleSave(content, 'address')"
-      />
-      <el-divider />
-      <edit-info
         title="电话号码"
         :content="accountStore.accountInfo.phone"
         @save="(content) => handleSave(content, 'phone')"
@@ -107,11 +101,6 @@ onMounted(() => {
         @save="(content) => handleSave(content, 'email')"
       />
       <el-divider />
-      <edit-info
-        title="研究方向"
-        :content="accountStore.accountInfo.researchDirection"
-        @save="(content) => handleSave(content, 'researchDirection')"
-      />
     </div>
   </div>
 </template>

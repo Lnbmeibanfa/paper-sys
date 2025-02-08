@@ -11,7 +11,9 @@ const request = axios.create({
 // 可以自请求发送前对请求做一些处理
 request.interceptors.request.use(
   (config) => {
-    // dosome
+    config.headers['Content-Type'] = 'application/json;charset-utf-8'
+    const token = JSON.parse(localStorage.getItem('account') || '{}')?.AccountInfo?.token
+    config.headers['token'] = token || ''
     return config
   },
   (error) => {

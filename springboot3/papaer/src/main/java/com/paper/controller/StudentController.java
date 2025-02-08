@@ -3,6 +3,7 @@ package com.paper.controller;
 import com.github.pagehelper.PageInfo;
 import com.paper.common.Result;
 import com.paper.entity.Student;
+import com.paper.entity.Teacher;
 import com.paper.service.StudentService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
@@ -65,6 +66,12 @@ public class StudentController {
         PageInfo<Student> pageInfo =studentService.selectByPage(student, pageSize, pageNum);
         return Result.success(pageInfo);
     }
-
-
+    /**
+     * 根据id查询student
+     */
+    @GetMapping("/selectById")
+    public Result selectById(@RequestParam Integer id) {
+        Student student = studentService.selectById(id);
+        return Result.success(student);
+    }
 }

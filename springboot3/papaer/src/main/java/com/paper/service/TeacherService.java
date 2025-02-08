@@ -27,7 +27,7 @@ public class TeacherService {
 
     public void add(Teacher teacher) {
         if (ObjectUtil.isEmpty(teacher.getRole())) {
-            teacher.setRole("ADMIN");
+            teacher.setRole("TEACHER");
         }
         if (ObjectUtil.isEmpty(teacher.getPassword())) {
             teacher.setPassword("123456");

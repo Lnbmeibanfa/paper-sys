@@ -20,4 +20,15 @@ const selectStudentDataAPI = (pageNum, pageSize, name) => {
   return request.get('/student/selectByPage', { params: { pageNum, pageSize, name } })
 }
 
-export { addStudentAPI, selectStudentDataAPI, deleteByIdAPI, deleteBatchAPI, updateStudentAPI }
+const selectByIdAPI = (id) => {
+  return request.get('/student/selectById', { params: { id } })
+}
+
+export {
+  addStudentAPI,
+  selectStudentDataAPI,
+  deleteByIdAPI,
+  deleteBatchAPI,
+  updateStudentAPI,
+  selectByIdAPI,
+}

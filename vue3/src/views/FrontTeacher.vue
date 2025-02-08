@@ -1,9 +1,19 @@
 <script setup>
 import router from '@/router'
 import { useAccountStore } from '@/stores/account'
-const accountStore = useAccountStore()
-
 import defaultAvatarImg from '@/assets/imgs/defaultAvatar.png'
+import { ElMessageBox } from 'element-plus'
+const accountStore = useAccountStore()
+const quit = () => {
+  ElMessageBox.confirm('确认退出登录？', '退出登录？', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(() => {
+    accountStore.cloneAccountInfo({})
+    router.push({ name: 'login' })
+  })
+}
 </script>
 
 <template>
@@ -51,12 +61,10 @@ import defaultAvatarImg from '@/assets/imgs/defaultAvatar.png'
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item @click="router.push({ name: 'self' })"
+                  <el-dropdown-item @click="router.push({ name: 'teacherSelf' })"
                     >个人资料</el-dropdown-item
                   >
-                  <el-dropdown-item @click="router.push({ name: 'login' })"
-                    >退出登录</el-dropdown-item
-                  >
+                  <el-dropdown-item @click="quit">退出登录</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
