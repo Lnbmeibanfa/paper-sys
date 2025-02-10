@@ -24,6 +24,8 @@ public class WebController {
     StudentService studentService;
     @Resource
     TeacherService teacherService;
+    @Resource
+    AdminService adminService;
 
     @PostMapping("/login")
     public Result login(@RequestBody Account account) {
@@ -32,6 +34,8 @@ public class WebController {
             loginAccount = teacherService.login(account);
         } else if (account.getRole().equals(Role.STUDENT.name())) {
             loginAccount = studentService.login(account);
+        } else if (account.getRole().equals(Role.ADMIN.name())) {
+            loginAccount = adminService.login(account);
         }
         return Result.success(loginAccount);
     }

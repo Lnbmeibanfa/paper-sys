@@ -35,9 +35,19 @@ const router = createRouter({
         },
         // 信息管理页面
         {
-          path: 'topicType',
-          component: () => import('@/views/manager/information/ManagerTopicType.vue'),
-          meta: { name: '论文题目类型' },
+          path: 'course',
+          component: () => import('@/views/manager/information/ManagerCourse.vue'),
+          meta: { name: '论文前置课程' },
+        },
+        {
+          path: 'language',
+          component: () => import('@/views/manager/information/ManagerLanguage.vue'),
+          meta: { name: '论文编程语言' },
+        },
+        {
+          path: 'technology',
+          component: () => import('@/views/manager/information/ManagerTechnology.vue'),
+          meta: { name: '论文编程技术' },
         },
       ],
     },
@@ -55,6 +65,10 @@ const router = createRouter({
           path: 'self',
           component: () => import('@/views/teacher/TeacherSelf.vue'),
           name: 'teacherSelf',
+        },
+        {
+          path: 'paper',
+          component: () => import('@/views/teacher/TeacherPaper.vue'),
         },
       ],
     },
@@ -76,6 +90,11 @@ const router = createRouter({
       ],
     },
     { path: '/login', name: 'login', component: () => import('@/views/login/AccountLogin.vue') },
+    {
+      path: '/loginManager',
+      name: 'loginManager',
+      component: () => import('@/views/login/ManagerLogin.vue'),
+    },
     { path: '/404', component: () => import('@/views/global/invalidPage404.vue') },
     { path: '/:pathMatch(.*)', redirect: '/404' },
   ],
@@ -95,7 +114,7 @@ router.beforeEach((to, from, next) => {
       to.path.includes('/student') ||
       to.path.includes('/manager')
     ) {
-      console.log(1)
+      console.log('toLOgin')
       next('/login')
     } else {
       // 允许访问其他页面
@@ -122,9 +141,9 @@ router.beforeEach((to, from, next) => {
           next()
         }
         break
-      case 'MANAGER':
-        if (to.path.includes('/student') || to.path.includes('/teacher')) {
-          next('/manager')
+      case 'ADMIN':
+        if (!to.path.includes('/manager')) {
+          to.path === '/loginManager' ? next() : next('/manager')
         } else {
           next()
         }

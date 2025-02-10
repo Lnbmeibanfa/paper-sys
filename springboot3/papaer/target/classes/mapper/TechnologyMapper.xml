@@ -1,0 +1,41 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.paper.mapper.TechnologyMapper">
+    <insert id="add">
+        insert into `technology`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">name,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+        </trim>
+    </insert>
+    <delete id="delete">
+        delete
+        from `technology`
+        where id = #{id};
+    </delete>
+
+    <update id="update">
+        update `technology`
+        <set>
+            <if test="name != null">name = #{name},</if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <select id="selectByPage" resultType="com.paper.entity.Technology">
+        select * from `technology`
+        <where>
+            <if test="name != null">and name like concat('%', #{name},'%')</if>
+        </where>
+    </select>
+    <select id="selectById" resultType="com.paper.entity.Technology">
+        select * from `technology` where id = #{id}
+    </select>
+</mapper>

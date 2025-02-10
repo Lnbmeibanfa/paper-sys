@@ -1,19 +1,19 @@
 <script setup>
 import { reactive, onMounted, ref } from 'vue'
 import {
-  addTopicTypeAPI,
-  selectTopicTypeDataAPI,
+  addCourseAPI,
+  selectCourseDataAPI,
   deleteByIdAPI,
   deleteBatchAPI,
-  updateTopicTypeAPI,
-} from '@/api/topicType'
+  updateCourseAPI,
+} from '@/api/course'
 import { ElMessage, ElMessageBox } from 'element-plus'
 const pageNum = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
 const name = ref()
 const data = reactive({
-  topicTypeData: [],
+  courseData: [],
   dialogVisible: false,
   formData: {},
   fileList: [],
@@ -35,7 +35,7 @@ const delBatch = () => {
     .then(() => {
       deleteBatchAPI(data.selectedIds).then((res) => {
         res.code === '200' ? ElMessage.success('删除成功') : ElMessage.error('删除失败')
-        loadTopicTypeData()
+        loadCourseData()
       })
     })
     .catch((err) => console.log(err))
@@ -49,7 +49,7 @@ const hanleDeleteRow = (row) => {
     .then(() => {
       deleteByIdAPI(row.id).then((res) => {
         res.code === '200' ? ElMessage.success('删除成功') : ElMessage.error('删除失败')
-        loadTopicTypeData()
+        loadCourseData()
       })
     })
     .catch((err) => console.log(err))
@@ -64,10 +64,10 @@ const hanleUpdateRow = (row) => {
 const handleSelectionChange = (selectedRows) => {
   data.selectedIds = selectedRows.map((row) => row.id)
 }
-const loadTopicTypeData = () => {
-  selectTopicTypeDataAPI(pageNum.value, pageSize.value, name.value).then((res) => {
+const loadCourseData = () => {
+  selectCourseDataAPI(pageNum.value, pageSize.value, name.value).then((res) => {
     if (res.code === '200') {
-      data.topicTypeData = res.data?.list || []
+      data.courseData = res.data?.list || []
       total.value = res.data?.total
     } else {
       ElMessage.error(res.msg)
@@ -76,7 +76,7 @@ const loadTopicTypeData = () => {
 }
 const reset = () => {
   name.value = null
-  loadTopicTypeData()
+  loadCourseData()
 }
 const save = () => {
   if (data.fileList.length !== 0 && !data.isupload) {
@@ -87,10 +87,10 @@ const save = () => {
   data.dialogVisible = false
 }
 const insert = () => {
-  addTopicTypeAPI(data.formData).then((res) => {
+  addCourseAPI(data.formData).then((res) => {
     if (res.code === '200') {
       ElMessage.success('添加成功')
-      loadTopicTypeData()
+      loadCourseData()
     } else {
       console.log(res)
       ElMessage.error(res.msg)
@@ -99,25 +99,25 @@ const insert = () => {
 }
 const update = () => {
   console.log(data.formData)
-  updateTopicTypeAPI(data.formData).then((res) => {
+  updateCourseAPI(data.formData).then((res) => {
     if (res.code === '200') {
       ElMessage.success('修改成功')
-      loadTopicTypeData()
+      loadCourseData()
     } else {
       ElMessage.error(res.msg)
     }
   })
 }
 onMounted(() => {
-  loadTopicTypeData()
+  loadCourseData()
 })
 </script>
 
 <template>
-  <div class="topicType-manage">
+  <div class="course-manage">
     <div class="search-box card">
-      <el-input v-model="name" style="width: 240px" placeholder="请输入昵称搜索" />
-      <el-button type="primary" size="default" @click="loadTopicTypeData">查询</el-button>
+      <el-input v-model="name" style="width: 240px" placeholder="请输入名称搜索" />
+      <el-button type="primary" size="default" @click="loadCourseData">查询</el-button>
       <el-button type="warning" size="default" @click="reset">重置</el-button>
     </div>
   </div>
@@ -127,13 +127,13 @@ onMounted(() => {
   </div>
   <div class="display card">
     <el-table
-      :data="data.topicTypeData"
+      :data="data.courseData"
       stripe
       style="width: 100%"
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" />
-      <el-table-column prop="type" label="论文选题类型" />
+      <el-table-column prop="name" label="论文前置课程" />
       <el-table-column label="操作" width="200">
         <template #default="scope">
           <el-button
@@ -159,14 +159,14 @@ onMounted(() => {
       :total="total"
       :page-size="pageSize"
       v-model:current-page="pageNum"
-      @current-change="loadTopicTypeData"
+      @current-change="loadCourseData"
     />
   </div>
   <!--dialog-->
-  <el-dialog v-model="data.dialogVisible" title="增加管理员" width="700">
+  <el-dialog v-model="data.dialogVisible" title="增加课程" width="700">
     <el-form label-width="70px" :model="data.formData">
-      <el-form-item label="选题类型">
-        <el-input v-model="data.formData.type" placeholder="请输入选题类型" clearable></el-input>
+      <el-form-item label="前置课程">
+        <el-input v-model="data.formData.name" placeholder="请输入前置课程" clearable></el-input>
       </el-form-item>
     </el-form>
     <template #footer>

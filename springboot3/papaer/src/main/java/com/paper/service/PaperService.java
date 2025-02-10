@@ -4,11 +4,9 @@ import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.paper.common.ResultCodeEnum;
-import com.paper.entity.Account;
-import com.paper.entity.TopicType;
+import com.paper.entity.Paper;
 import com.paper.exception.CustomException;
-import com.paper.mapper.TopicTypeMapper;
-import com.paper.util.JWTUtil;
+import com.paper.mapper.PaperMapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -19,23 +17,23 @@ import java.util.List;
  * @since 2025-01-26
  */
 @Service
-public class TopicTypeService {
+public class PaperService {
     @Resource
-    TopicTypeMapper topicTypeMapper;
+    PaperMapper paperMapper;
 
-    public void add(TopicType topicType) {
-        topicTypeMapper.add(topicType);
+    public void add(Paper paper) {
+        paperMapper.add(paper);
     }
 
-    public PageInfo<TopicType> selectByPage(TopicType topicType, Integer pageSize, Integer pageNum) {
+    public PageInfo<Paper> selectByPage(Paper paper, Integer pageSize, Integer pageNum) {
         PageHelper.startPage(pageNum, pageSize);
-        List<TopicType> list = topicTypeMapper.selectByPage(topicType);
+        List<Paper> list = paperMapper.selectByPage(paper);
         return PageInfo.of(list);
     }
 
 
     public void deleteById(Integer id) {
-        topicTypeMapper.delete(id);
+        paperMapper.delete(id);
     }
 
     public void deleteBatch(List<Integer> ids) {
@@ -44,19 +42,19 @@ public class TopicTypeService {
         }
     }
 
-    public void update(TopicType topicType) {
-        if (ObjectUtil.isNull(topicType.getId())) {
+    public void update(Paper paper) {
+        if (ObjectUtil.isNull(paper.getId())) {
             throw new CustomException(ResultCodeEnum.USER_NOT_EXIST_ERROR);
         }
-        TopicType dbTopicType = topicTypeMapper.selectById(topicType.getId());
-        if (ObjectUtil.isEmpty(dbTopicType)) {
+        Paper dbPaper = paperMapper.selectById(paper.getId());
+        if (ObjectUtil.isEmpty(dbPaper)) {
             throw new CustomException(ResultCodeEnum.USER_NOT_EXIST_ERROR);
         }
-        topicTypeMapper.update(topicType);
+        paperMapper.update(paper);
     }
 
-    public TopicType selectById(Integer id) {
-        return topicTypeMapper.selectById(id);
+    public Paper selectById(Integer id) {
+        return paperMapper.selectById(id);
     }
 
 }

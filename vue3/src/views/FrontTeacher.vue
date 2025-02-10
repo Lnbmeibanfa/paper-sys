@@ -36,7 +36,7 @@ const quit = () => {
           :ellipsis="false"
         >
           <el-menu-item index="/teacher/home">首页</el-menu-item>
-          <el-menu-item index="4">论文管理</el-menu-item>
+          <el-menu-item index="/teacher/paper">论文管理</el-menu-item>
         </el-menu>
       </nav>
       <div class="account">

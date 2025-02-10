@@ -1,7 +1,13 @@
 <script setup>
 import router from '@/router'
+import { useAccountStore } from '@/stores/account'
 import { useRoute } from 'vue-router'
+const accountInfo = useAccountStore()
 const route = useRoute()
+const quit = () => {
+  accountInfo.cloneAccountInfo({})
+  router.push({ name: 'loginManager' })
+}
 </script>
 
 <template>
@@ -34,9 +40,7 @@ const route = useRoute()
               <template #dropdown>
                 <el-dropdown-menu>
                   <el-dropdown-item>个人资料</el-dropdown-item>
-                  <el-dropdown-item @click="router.push({ name: 'login' })"
-                    >退出登录</el-dropdown-item
-                  >
+                  <el-dropdown-item @click="quit">退出登录</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -51,12 +55,14 @@ const route = useRoute()
             <el-icon><House /></el-icon>
             <span>系统首页</span>
           </el-menu-item>
-          <el-sub-menu index="/manager/topicType">
+          <el-sub-menu index="/manager/course">
             <template #title>
               <el-icon><DocumentCopy /></el-icon>
               <span>信息管理</span>
             </template>
-            <el-menu-item index="/manager/topicType">论文选题类型管理</el-menu-item>
+            <el-menu-item index="/manager/course">论文前置课程管理</el-menu-item>
+            <el-menu-item index="/manager/language">论文编程语言管理</el-menu-item>
+            <el-menu-item index="/manager/technology">论文编程技术管理</el-menu-item>
           </el-sub-menu>
           <el-sub-menu index="/manager/admin">
             <template #title>
