@@ -2,7 +2,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.paper.mapper.PaperMapper">
-    <insert id="add">
+    <insert id="add" parameterType="com.paper.entity.Paper" useGeneratedKeys="true" keyProperty="id">
         insert into `paper`
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
@@ -11,9 +11,10 @@
             <if test="name != null">name,</if>
             <if test="resource != null">resource,</if>
             <if test="content != null">content,</if>
-            <if test="tags != null">tags,</if>
             <if test="studentGroup != null">student_group,</if>
             <if test="type != null">type,</if>
+            <if test="gpa != null">gpa,</if>
+            <if test="requirement != null">requirement,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -24,6 +25,8 @@
             <if test="content != null">#{content},</if>
             <if test="studentGroup != null">#{studentGroup},</if>
             <if test="type != null">#{type},</if>
+            <if test="gpa != null">#{gpa},</if>
+            <if test="requirement != null">#{requirement},</if>
         </trim>
     </insert>
     <delete id="delete">
@@ -37,12 +40,16 @@
         <set>
             <if test="teacherId != null">teacher_id = #{teacherId},</if>
             <if test="studentId != null">student_id = #{studentId},</if>
+            <if test="courseId != null">course_id = #{courseId}</if>
+            <if test="languageId != null">language_id = #{languageId}</if>
+            <if test="technologyId != null">technology_id = #{technologyId}</if>
+            <if test="gpa != null">gpa = #{gpa}</if>
             <if test="name != null">name = #{name},</if>
             <if test="resource != null">resource = #{resource},</if>
             <if test="content != null">content = #{content},</if>
-            <if test="tags != null">tags = #{tags},</if>
             <if test="studentGroup != null">student_group = #{studentGroup},</if>
             <if test="type != null">type = #{type},</if>
+            <if test="requirement != null">requirement = #{requirement},</if>
         </set>
         <where>
             id = #{id}
@@ -50,7 +57,11 @@
     </update>
 
     <select id="selectByPage" resultType="com.paper.entity.Paper">
-        select * from `paper`
+        select paper.*,
+        t.name as teacherName, s.name as studentName
+        from `paper`
+        left join `paper-sys`.teacher t on t.id = paper.teacher_id
+        left join `paper-sys`.student s on s.id = paper.student_id
         <where>
             <if test="teacherId != null">and teacher_id = #{teacherId}</if>
             <if test="studentId != null">and student_id = #{studentId}</if>

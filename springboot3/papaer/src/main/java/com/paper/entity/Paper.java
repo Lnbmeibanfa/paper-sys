@@ -18,18 +18,18 @@ public class Paper {
     private String teacherName;
     private Integer studentId;
     private String studentName;
-    private Integer courseId;
-    private String courseName;
-    private Integer languageId;
-    private String languageName;
-    private Integer technologyId;
-    private String technologyName;
+    private List<Integer> courseIds;
+    private List<Integer> languageIds;
+    private List<Integer> technologyIds;
+    private List<String> courseNames;
+    private List<String> languageNames;
+    private List<String> technologyNames;
     private String content;
     private String name;
+    private String resource;
     private String requirement;
-    private List<String> tagsList;
-    private String tags;
     private String studentGroup;
     private String type;
+    private Double gpa;
 
 }

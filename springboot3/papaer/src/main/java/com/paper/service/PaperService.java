@@ -5,8 +5,14 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.paper.common.ResultCodeEnum;
 import com.paper.entity.Paper;
+import com.paper.entity.PaperCourse;
+import com.paper.entity.PaperLanguage;
+import com.paper.entity.PaperTechnology;
 import com.paper.exception.CustomException;
+import com.paper.mapper.PaperCourseMapper;
+import com.paper.mapper.PaperLanguageMapper;
 import com.paper.mapper.PaperMapper;
+import com.paper.mapper.PaperTechnologyMapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +26,34 @@ import java.util.List;
 public class PaperService {
     @Resource
     PaperMapper paperMapper;
+    @Resource
+    PaperCourseMapper paperCourseMapper;
+    @Resource
+    PaperLanguageMapper paperLanguageMapper;
+    @Resource
+    PaperTechnologyMapper paperTechnologyMapper;
 
     public void add(Paper paper) {
         paperMapper.add(paper);
+        Integer paperId = paper.getId();
+        List<Integer> courseIds = paper.getCourseIds();
+        List<Integer> languageIds = paper.getLanguageIds();
+        List<Integer> technologyIds = paper.getTechnologyIds();
+        if (courseIds != null && !courseIds.isEmpty()) {
+            for (Integer courseId : courseIds) {
+                paperCourseMapper.add(new PaperCourse(paperId, courseId));
+            }
+        }
+        if(languageIds != null && !languageIds.isEmpty()) {
+            for (Integer languageId : languageIds) {
+                paperLanguageMapper.add(new PaperLanguage(paperId, languageId));
+            }
+        }
+        if (technologyIds != null && !technologyIds.isEmpty()) {
+            for (Integer technologyId : technologyIds) {
+                paperTechnologyMapper.add(new PaperTechnology(paperId, technologyId));
+            }
+        }
     }
 
     public PageInfo<Paper> selectByPage(Paper paper, Integer pageSize, Integer pageNum) {

@@ -1,0 +1,44 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.paper.mapper.PaperLanguageMapper">
+    <insert id="add">
+        insert into `paper_language`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="paperId != null">paper_id,</if>
+            <if test="languageId != null">language_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="paperId != null">#{paperId},</if>
+            <if test="languageId != null">#{languageId},</if>
+        </trim>
+    </insert>
+    <delete id="delete">
+        delete
+        from `paper_language`
+        where id = #{id};
+    </delete>
+
+    <update id="update">
+        update `paper_language`
+        <set>
+            <if test="paperId != null">paper_id = #{paperId},</if>
+            <if test="languageId != null">language_id = #{languageId},</if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <select id="selectByPage" resultType="com.paper.entity.PaperLanguage">
+        select * from `paper_language`
+        <where>
+            <if test="name != null">and name like concat('%', #{name},'%')</if>
+        </where>
+    </select>
+    <select id="selectById" resultType="com.paper.entity.PaperLanguage">
+        select * from `paper_language` where id = #{id}
+    </select>
+</mapper>

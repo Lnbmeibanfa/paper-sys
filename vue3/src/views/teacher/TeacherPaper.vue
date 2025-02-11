@@ -1,5 +1,5 @@
 <script setup>
-import { selectPaperDataAPI } from '@/api/paper'
+import { selectPaperDataAPI, addPaperAPI } from '@/api/paper'
 import { selectCourseDataAPI } from '@/api/course'
 import { selectLanguageDataAPI } from '@/api/language'
 import { selectTechnologyDataAPI } from '@/api/technology'
@@ -14,6 +14,7 @@ const data = reactive({
 // 初始信息加载
 const accountInfo = useAccountStore()
 const paperData = ref({})
+const paperForm = ref({})
 const courseData = ref({})
 const languageData = ref({})
 const technologyData = ref({})
@@ -55,9 +56,20 @@ const loadCourseData = () => {
 }
 // 创建新的论文
 const createNewPaper = () => {
+  paperForm.value = {}
   data.dialogVisiable = true
 }
-const paperForm = reactive({})
+
+const submitPaper = () => {
+  paperForm.value.teacherId = accountInfo.accountInfo.id
+  addPaperAPI(paperForm.value).then((res) => {
+    if (res.code === '200') {
+      ElMessage.success('创建成功')
+    } else {
+      ElMessage.error(res.msg)
+    }
+  })
+}
 onMounted(() => {
   loadPaperData()
   loadCourseData()
@@ -68,9 +80,8 @@ onMounted(() => {
 
 <template>
   <div class="paper-box card">
-    <el-empty v-if="paperData.total === 0" description="还没有创建任何论文"
-      ><el-button type="primary" @click="createNewPaper">去创建</el-button></el-empty
-    >
+    <!-- v-if="paperData.total === 0" description="还没有创建任何论文" -->
+    <el-empty><el-button type="primary" @click="createNewPaper">去创建</el-button></el-empty>
   </div>
 
   <!-- dialog -->
@@ -80,7 +91,7 @@ onMounted(() => {
       <div class="form-box">
         <el-form :model="paperForm" label-width="70px">
           <el-form-item prop="name" label="论文名称">
-            <el-input v-model="paperForm.name"></el-input>
+            <el-input v-model="paperForm.name" placeholder="请输入论文名称"> </el-input>
           </el-form-item>
           <el-form-item prop="resource" label="题目来源">
             <el-select v-model="paperForm.resource" placeholder="请选择题目来源">
@@ -103,13 +114,14 @@ onMounted(() => {
               type="textarea"
               maxlength="5000"
               show-word-limit
+              placeholder="请输入论文内容"
             ></el-input>
           </el-form-item>
         </el-form>
       </div>
       <div class="title">2.论文要求</div>
       <div class="form-box">
-        <el-form :model="paperForm">
+        <el-form :model="paperForm" label-width="100px">
           <el-form-item prop="studentGroup" label="面向学生">
             <el-select v-model="paperForm.studentGroup" placeholder="请选择面向学生">
               <el-option value="计算机科学系" label="计算机科学系"></el-option>
@@ -120,13 +132,51 @@ onMounted(() => {
           <el-form-item prop="gpa" label="绩点大于">
             <el-input-number v-model="paperForm.gpa" :min="1" :max="5" :step="0.5" />
           </el-form-item>
+          <el-form-item prop="coureseIds" label="前置课程要求">
+            <el-select v-model="paperForm.courseIds" placeholder="请选择课程要求" multiple>
+              <el-option
+                v-for="course in courseData"
+                :key="course.id"
+                :value="course.id"
+                :label="course.name"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item prop="languageIds" label="编程语言要求">
+            <el-select v-model="paperForm.languageIds" placeholder="请选择语言要求" multiple>
+              <el-option
+                v-for="language in languageData"
+                :key="language.id"
+                :value="language.id"
+                :label="language.name"
+              ></el-option> </el-select
+          ></el-form-item>
+          <el-form-item prop="technologyIds" label="所需技术要求">
+            <el-select v-model="paperForm.technologyIds" placeholder="请选择技术要求" multiple>
+              <el-option
+                v-for="technology in technologyData"
+                :key="technology.id"
+                :value="technology.id"
+                :label="technology.name"
+              ></el-option> </el-select
+          ></el-form-item>
+          <el-form-item prop="requirement" label="其他要求">
+            <el-input
+              v-model="paperForm.requirement"
+              :rows="5"
+              type="textarea"
+              maxlength="5000"
+              show-word-limit
+              placeholder="请输入其他要求"
+            ></el-input
+          ></el-form-item>
         </el-form>
       </div>
     </div>
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="data.dialogVisiable = false">取消</el-button>
-        <el-button type="primary" @click="data.dialogVisiable = false">确认</el-button>
+        <el-button type="primary" @click="submitPaper">确认</el-button>
       </div>
     </template>
   </el-dialog>

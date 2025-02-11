@@ -1,0 +1,44 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.paper.mapper.PaperCourseMapper">
+    <insert id="add">
+        insert into `paper_course`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="paperId != null">paper_id,</if>
+            <if test="courseId != null">course_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="paperId != null">#{paperId},</if>
+            <if test="courseId != null">#{courseId},</if>
+        </trim>
+    </insert>
+    <delete id="delete">
+        delete
+        from `paper_course`
+        where id = #{id};
+    </delete>
+
+    <update id="update">
+        update `paper_course`
+        <set>
+            <if test="paperId != null">paper_id = #{paperId},</if>
+            <if test="courseId != null">course_id = #{courseId},</if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <select id="selectByPage" resultType="com.paper.entity.PaperCourse">
+        select * from `paper_course`
+        <where>
+            <if test="name != null">and name like concat('%', #{name},'%')</if>
+        </where>
+    </select>
+    <select id="selectById" resultType="com.paper.entity.PaperCourse">
+        select * from `paper_course` where id = #{id}
+    </select>
+</mapper>
