@@ -35,25 +35,7 @@ public class PaperService {
 
     public void add(Paper paper) {
         paperMapper.add(paper);
-        Integer paperId = paper.getId();
-        List<Integer> courseIds = paper.getCourseIds();
-        List<Integer> languageIds = paper.getLanguageIds();
-        List<Integer> technologyIds = paper.getTechnologyIds();
-        if (courseIds != null && !courseIds.isEmpty()) {
-            for (Integer courseId : courseIds) {
-                paperCourseMapper.add(new PaperCourse(paperId, courseId));
-            }
-        }
-        if(languageIds != null && !languageIds.isEmpty()) {
-            for (Integer languageId : languageIds) {
-                paperLanguageMapper.add(new PaperLanguage(paperId, languageId));
-            }
-        }
-        if (technologyIds != null && !technologyIds.isEmpty()) {
-            for (Integer technologyId : technologyIds) {
-                paperTechnologyMapper.add(new PaperTechnology(paperId, technologyId));
-            }
-        }
+        addMiddleData(paper);
     }
 
     public PageInfo<Paper> selectByPage(Paper paper, Integer pageSize, Integer pageNum) {
@@ -74,13 +56,12 @@ public class PaperService {
     }
 
     public void update(Paper paper) {
-        if (ObjectUtil.isNull(paper.getId())) {
-            throw new CustomException(ResultCodeEnum.USER_NOT_EXIST_ERROR);
+        Integer paperId = paper.getId();
+        if (ObjectUtil.isNull((paper))) {
+            throw new CustomException(ResultCodeEnum.SYSTEM_ERROR);
         }
-        Paper dbPaper = paperMapper.selectById(paper.getId());
-        if (ObjectUtil.isEmpty(dbPaper)) {
-            throw new CustomException(ResultCodeEnum.USER_NOT_EXIST_ERROR);
-        }
+        deleteMiddleData(paperId);
+        addMiddleData(paper);
         paperMapper.update(paper);
     }
 
@@ -88,4 +69,31 @@ public class PaperService {
         return paperMapper.selectById(id);
     }
 
+    private void deleteMiddleData(Integer paperId) {
+        paperCourseMapper.deleteByPaperId(paperId);
+        paperLanguageMapper.deleteByPaperId(paperId);
+        paperTechnologyMapper.deleteByPaperId(paperId);
+    }
+
+    private void addMiddleData (Paper paper) {
+        Integer paperId = paper.getId();
+        List<Integer> courseIds = paper.getCourseIds();
+        List<Integer> languageIds = paper.getLanguageIds();
+        List<Integer> technologyIds = paper.getTechnologyIds();
+        if (courseIds != null && !courseIds.isEmpty()) {
+            for (Integer courseId : courseIds) {
+                paperCourseMapper.add(new PaperCourse(paperId, courseId));
+            }
+        }
+        if(languageIds != null && !languageIds.isEmpty()) {
+            for (Integer languageId : languageIds) {
+                paperLanguageMapper.add(new PaperLanguage(paperId, languageId));
+            }
+        }
+        if (technologyIds != null && !technologyIds.isEmpty()) {
+            for (Integer technologyId : technologyIds) {
+                paperTechnologyMapper.add(new PaperTechnology(paperId, technologyId));
+            }
+        }
+    }
 }

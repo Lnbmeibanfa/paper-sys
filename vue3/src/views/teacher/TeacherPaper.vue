@@ -1,5 +1,5 @@
 <script setup>
-import { selectPaperDataAPI, addPaperAPI } from '@/api/paper'
+import { selectPaperDataAPI, addPaperAPI, updatePaperAPI, deleteByIdAPI } from '@/api/paper'
 import { selectCourseDataAPI } from '@/api/course'
 import { selectLanguageDataAPI } from '@/api/language'
 import { selectTechnologyDataAPI } from '@/api/technology'
@@ -8,6 +8,7 @@ import { useAccountStore } from '@/stores/account'
 import { ElMessage } from 'element-plus'
 import { onMounted } from 'vue'
 import { reactive } from 'vue'
+import PaperTeacherShower from '../component/PaperTeacherShower.vue'
 const data = reactive({
   dialogVisiable: false,
 })
@@ -19,9 +20,9 @@ const courseData = ref({})
 const languageData = ref({})
 const technologyData = ref({})
 const loadPaperData = () => {
-  selectPaperDataAPI(accountInfo.accountInfo.id).then((res) => {
+  selectPaperDataAPI(null, null, accountInfo.accountInfo.id).then((res) => {
     if (res.code === '200') {
-      paperData.value = res.data
+      paperData.value = res.data.list
     } else {
       ElMessage.error(res.msg)
     }
@@ -59,12 +60,46 @@ const createNewPaper = () => {
   paperForm.value = {}
   data.dialogVisiable = true
 }
-
 const submitPaper = () => {
+  paperForm.value.id ? update() : add()
+}
+const update = () => {
+  updatePaperAPI(paperForm.value).then((res) => {
+    if (res.code === '200') {
+      ElMessage.success('修改成功')
+      data.dialogVisiable = false
+      loadPaperData()
+    } else {
+      ElMessage.error(res.msg)
+    }
+  })
+}
+const add = () => {
   paperForm.value.teacherId = accountInfo.accountInfo.id
   addPaperAPI(paperForm.value).then((res) => {
     if (res.code === '200') {
       ElMessage.success('创建成功')
+      data.dialogVisiable = false
+      loadPaperData()
+    } else {
+      ElMessage.error(res.msg)
+    }
+  })
+}
+const handleEdit = (paperId) => {
+  data.dialogVisiable = true
+  paperForm.value = JSON.parse(
+    JSON.stringify(paperData.value.find((paper) => paper.id === paperId)),
+  )
+  paperForm.value.courseIds = paperForm.value.courses.map((course) => course.id)
+  paperForm.value.languageIds = paperForm.value.languages.map((language) => language.id)
+  paperForm.value.technologyIds = paperForm.value.technologies.map((technology) => technology.id)
+}
+const handleDel = (paperId) => {
+  deleteByIdAPI(paperId).then((res) => {
+    if (res.code === '200') {
+      ElMessage.success('删除成功')
+      loadPaperData()
     } else {
       ElMessage.error(res.msg)
     }
@@ -80,8 +115,24 @@ onMounted(() => {
 
 <template>
   <div class="paper-box card">
-    <!-- v-if="paperData.total === 0" description="还没有创建任何论文" -->
-    <el-empty><el-button type="primary" @click="createNewPaper">去创建</el-button></el-empty>
+    <el-empty v-if="paperData.total === 0" description="还没有创建任何论文"
+      ><el-button type="primary" @click="createNewPaper">去创建</el-button></el-empty
+    >
+    <div class="paper-data-show" v-else>
+      <div class="paper-show-box">
+        <paper-teacher-shower
+          v-for="paper in paperData"
+          :key="paper.id"
+          :paper="paper"
+          @onEdit="handleEdit"
+          @onDel="handleDel"
+        >
+        </paper-teacher-shower>
+      </div>
+      <div class="create-button">
+        <el-button type="primary" @click="createNewPaper">创建新的论文</el-button>
+      </div>
+    </div>
   </div>
 
   <!-- dialog -->
@@ -132,7 +183,7 @@ onMounted(() => {
           <el-form-item prop="gpa" label="绩点大于">
             <el-input-number v-model="paperForm.gpa" :min="1" :max="5" :step="0.5" />
           </el-form-item>
-          <el-form-item prop="coureseIds" label="前置课程要求">
+          <el-form-item prop="courseIds" label="前置课程要求">
             <el-select v-model="paperForm.courseIds" placeholder="请选择课程要求" multiple>
               <el-option
                 v-for="course in courseData"
@@ -199,5 +250,8 @@ onMounted(() => {
 }
 .form-box {
   padding: 20px;
+}
+.paper-data-show {
+  width: 100%;
 }
 </style>

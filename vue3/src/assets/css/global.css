@@ -27,7 +27,7 @@ a {
 
 .background {
   background-color: var(--background-color);
-  height: 100vh;
+  height: 100%;
 }
 
 .h1 {

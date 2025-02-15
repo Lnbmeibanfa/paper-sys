@@ -21,9 +21,9 @@ public class Paper {
     private List<Integer> courseIds;
     private List<Integer> languageIds;
     private List<Integer> technologyIds;
-    private List<String> courseNames;
-    private List<String> languageNames;
-    private List<String> technologyNames;
+    private List<Course> courses;
+    private List<Language> languages;
+    private List<Technology> technologies;
     private String content;
     private String name;
     private String resource;

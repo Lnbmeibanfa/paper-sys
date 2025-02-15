@@ -22,4 +22,6 @@ public interface TechnologyMapper {
 
     Technology selectById(Integer id);
 
+    List<Technology> selectTechnologyByPaperId(Integer paperId);
+
 }

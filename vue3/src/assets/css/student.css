@@ -47,6 +47,11 @@ nav {
   margin-right: 20px;
 }
 
+.student-view {
+  min-height: 100vh;
+  height: auto;
+}
+
 main {
   height: 100%;
 }

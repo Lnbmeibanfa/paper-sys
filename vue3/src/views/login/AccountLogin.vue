@@ -53,12 +53,12 @@ const login = () => {
 
 <template>
   <div class="login">
-    <div class="background">
+    <div class="bg">
       <div class="empty-box"></div>
       <div class="login-box">
         <div class="box-bg">
           <div class="box">
-            <el-icon><Monitor /></el-icon>
+            <el-icon @click="router.push({ name: 'loginManager' })"><User /></el-icon>
             <div class="title">欢迎使用</div>
             <div class="radio-box">
               <el-radio-group v-model="userInfo.role">
@@ -102,11 +102,12 @@ const login = () => {
 </template>
 
 <style scoped>
-.background {
+.bg {
   background: url('@/assets/imgs/loginBg.jpg');
   background-size: cover;
   opacity: 0.8;
   display: flex;
+  height: 100vh;
 }
 .login-box {
   display: flex;
@@ -130,6 +131,7 @@ const login = () => {
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
   position: relative; /* 相对定位，用于伪元素定位 */
   overflow: hidden; /* 防止伪元素溢出 */
+  cursor: pointer;
 }
 .box::after {
   content: ''; /* 伪元素内容 */

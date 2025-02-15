@@ -46,7 +46,10 @@ nav {
   font-size: 20px;
   margin-right: 20px;
 }
-
+.teacher-view {
+  min-height: 100vh;
+  height: auto;
+}
 main {
   height: 100%;
 }

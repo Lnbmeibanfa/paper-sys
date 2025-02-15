@@ -18,6 +18,8 @@ public interface PaperTechnologyMapper {
 
     void delete(Integer id);
 
+    void deleteByPaperId(Integer paperId);
+
     void update(PaperTechnology paperTechnology);
 
     PaperTechnology selectById(Integer id);

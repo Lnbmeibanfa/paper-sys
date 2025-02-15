@@ -21,6 +21,11 @@
         where id = #{id};
     </delete>
 
+    <delete id="deleteByPaperId">
+        delete
+        from `paper_course`
+        where paper_id = #{paperId}
+    </delete>
     <update id="update">
         update `paper_course`
         <set>

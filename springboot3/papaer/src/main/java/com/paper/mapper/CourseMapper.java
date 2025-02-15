@@ -1,6 +1,7 @@
 package com.paper.mapper;
 
 import com.paper.entity.Course;
+import com.paper.entity.Technology;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -22,4 +23,6 @@ public interface CourseMapper {
 
     Course selectById(Integer id);
 
+
+    List<Course> selectCourseByPaperId(Integer paperId);
 }

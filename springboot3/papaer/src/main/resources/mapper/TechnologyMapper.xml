@@ -38,4 +38,10 @@
     <select id="selectById" resultType="com.paper.entity.Technology">
         select * from `technology` where id = #{id}
     </select>
+
+    <select id="selectTechnologyByPaperId" resultType="com.paper.entity.Technology">
+        select c.*, pc.paper_id from technology c
+                            left join `paper-sys`.paper_technology pc on c.id = pc.technology_id
+        where paper_id = #{paperId}
+    </select>
 </mapper>

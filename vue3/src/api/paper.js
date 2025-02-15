@@ -16,8 +16,8 @@ const updatePaperAPI = (data) => {
   return request.put('/paper/update', data)
 }
 
-const selectPaperDataAPI = (pageNum, pageSize, name) => {
-  return request.get('/paper/selectByPage', { params: { pageNum, pageSize, name } })
+const selectPaperDataAPI = (pageNum, pageSize, teacherId) => {
+  return request.get('/paper/selectByPage', { params: { pageNum, pageSize, teacherId } })
 }
 
 export { addPaperAPI, selectPaperDataAPI, deleteByIdAPI, deleteBatchAPI, updatePaperAPI }

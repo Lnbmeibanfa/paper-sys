@@ -18,6 +18,8 @@ public interface PaperCourseMapper {
 
     void delete(Integer id);
 
+    void deleteByPaperId(Integer paperId);
+
     void update(PaperCourse paperCourse);
 
     PaperCourse selectById(Integer id);

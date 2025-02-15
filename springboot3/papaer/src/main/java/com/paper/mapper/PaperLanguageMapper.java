@@ -18,6 +18,8 @@ public interface PaperLanguageMapper {
 
     void delete(Integer id);
 
+    void deleteByPaperId(Integer paperId);
+
     void update(PaperLanguage paperLanguage);
 
     PaperLanguage selectById(Integer id);

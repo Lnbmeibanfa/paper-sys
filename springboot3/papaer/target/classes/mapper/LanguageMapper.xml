@@ -38,4 +38,10 @@
     <select id="selectById" resultType="com.paper.entity.Language">
         select * from `language` where id = #{id}
     </select>
+
+    <select id="selectLanguageByPaperId" resultType="com.paper.entity.Language">
+        select c.*, pc.paper_id from language c
+        left join `paper-sys`.paper_language pc on c.id = pc.language_id
+        where paper_id = #{paperId}
+    </select>
 </mapper>
