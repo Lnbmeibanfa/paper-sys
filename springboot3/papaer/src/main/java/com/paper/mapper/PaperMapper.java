@@ -22,5 +22,5 @@ public interface PaperMapper {
 
     Paper selectById(Integer id);
 
-
+    List<Paper> selectByFilter(Paper paper);
 }

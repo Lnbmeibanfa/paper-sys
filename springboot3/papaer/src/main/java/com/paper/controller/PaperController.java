@@ -65,4 +65,13 @@ public class PaperController {
         PageInfo<Paper> pageInfo =paperService.selectByPage(paper, pageSize, pageNum);
         return Result.success(pageInfo);
     }
+
+    /**
+     * 筛选查询paper
+     */
+    @PostMapping("/selectByFilter")
+    public Result selectByFilter(@RequestBody  Paper paper) {
+        List<Paper> papers = paperService.selectByFilter(paper);
+        return Result.success(papers);
+    }
 }

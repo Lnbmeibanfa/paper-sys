@@ -96,4 +96,8 @@ public class PaperService {
             }
         }
     }
+
+    public List<Paper> selectByFilter(Paper paper) {
+        return paperMapper.selectByFilter(paper);
+    }
 }

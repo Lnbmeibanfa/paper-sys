@@ -16,6 +16,13 @@ public class Paper {
     private Integer id;
     private Integer teacherId;
     private String teacherName;
+    private String teacherAddress;
+    private String teacherPhone;
+    private String teacherWechat;
+    private String teacherEmail;
+    private String teacherQQ;
+    private String teacherResearchDirection;
+    private String teacherAvatar;
     private Integer studentId;
     private String studentName;
     private List<Integer> courseIds;

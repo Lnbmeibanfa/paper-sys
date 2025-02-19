@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import { selectCourseDataAPI } from '@/api/course'
 import { selectLanguageDataAPI } from '@/api/language'
 import { selectTechnologyDataAPI } from '@/api/technology'
+import { selectPaperByFilter } from '@/api/paper'
+import PaperStudentShower from '@/views/component/PaperStudentShower.vue'
 import { ElMessage } from 'element-plus'
 import { onMounted } from 'vue'
 
@@ -10,6 +12,7 @@ const keyword = ref('')
 const courseData = ref(null)
 const languageData = ref(null)
 const technologyData = ref(null)
+const paperData = ref(null)
 const search = () => {}
 // 数据加载
 const loadLanguageData = () => {
@@ -39,12 +42,47 @@ const loadCourseData = () => {
     }
   })
 }
+const loadPaperData = () => {
+  selectPaperByFilter(filterCondition.value).then((res) => {
+    if (res.code === '200') {
+      paperData.value = res.data
+    } else {
+      ElMessage.error(res.msg)
+    }
+  })
+}
 // 处理筛选条件
-const filterCondition = ref({})
+const filterCondition = ref({
+  courseIds: [],
+  languageIds: [],
+  technologyIds: [],
+})
+const toggleCourse = (courseId) => {
+  const index = filterCondition.value.courseIds.indexOf(courseId)
+  index === -1
+    ? filterCondition.value.courseIds.push(courseId)
+    : filterCondition.value.courseIds.splice(index, 1)
+  loadPaperData()
+}
+const toggleLanguage = (languageId) => {
+  const index = filterCondition.value.languageIds.indexOf(languageId)
+  index === -1
+    ? filterCondition.value.languageIds.push(languageId)
+    : filterCondition.value.languageIds.splice(index, 1)
+  loadPaperData()
+}
+const toggleTechnology = (technologyId) => {
+  const index = filterCondition.value.technologyIds.indexOf(technologyId)
+  index === -1
+    ? filterCondition.value.technologyIds.push(technologyId)
+    : filterCondition.value.technologyIds.splice(index, 1)
+  loadPaperData()
+}
 onMounted(() => {
   loadCourseData()
   loadLanguageData()
   loadTechnologyData()
+  loadPaperData()
 })
 </script>
 
@@ -68,10 +106,9 @@ onMounted(() => {
             <el-dropdown>
               <span class="el-dropdown-link">
                 前置课程
-                <div>{{}}</div>
-                <el-icon class="el-icon--right">
-                  <arrow-down />
-                </el-icon>
+                <div v-if="filterCondition.courseIds.length !== 0">
+                  ({{ filterCondition.courseIds.length }})
+                </div>
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
@@ -89,15 +126,18 @@ onMounted(() => {
             <el-dropdown>
               <span class="el-dropdown-link">
                 编程语言
-                <el-icon class="el-icon--right">
-                  <arrow-down />
-                </el-icon>
+                <div v-if="filterCondition.languageIds.length !== 0">
+                  ({{ filterCondition.languageIds.length }})
+                </div>
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item v-for="language in languageData" :key="language.id">{{
-                    language.name
-                  }}</el-dropdown-item>
+                  <el-dropdown-item
+                    v-for="language in languageData"
+                    :key="language.id"
+                    @click="toggleLanguage(language.id)"
+                    >{{ language.name }}</el-dropdown-item
+                  >
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -106,15 +146,18 @@ onMounted(() => {
             <el-dropdown>
               <span class="el-dropdown-link">
                 相关技术
-                <el-icon class="el-icon--right">
-                  <arrow-down />
-                </el-icon>
-              </span>
+                <div v-if="filterCondition.technologyIds.length !== 0">
+                  ({{ filterCondition.technologyIds.length }})
+                </div></span
+              >
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item v-for="technology in technologyData" :key="technology.id">{{
-                    technology.name
-                  }}</el-dropdown-item>
+                  <el-dropdown-item
+                    v-for="technology in technologyData"
+                    :key="technology.id"
+                    @click="toggleTechnology(technology.id)"
+                    >{{ technology.name }}</el-dropdown-item
+                  >
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -123,11 +166,23 @@ onMounted(() => {
         <div class="clear-filter"><div>清除筛选条件</div></div>
       </div>
     </div>
+    <div class="content-box">
+      <div class="display-box">
+        <paper-student-shower v-for="paper in paperData" :key="paper.id" :paper="paper" />
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
 .search-box {
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #fff;
+  width: 1200px;
+  margin: 15px auto;
+}
+.content-box {
   padding: 20px;
   border-radius: 10px;
   background-color: #fff;
@@ -146,9 +201,11 @@ onMounted(() => {
   flex: 1;
 }
 .filter {
-  padding: 5px;
+  padding: 8px;
   background-color: #f8f8f8;
   margin-right: 10px;
+  display: flex;
+  align-items: center;
 }
 .clear-filter {
   display: flex;
@@ -156,5 +213,8 @@ onMounted(() => {
 }
 .blank {
   width: 20px;
+}
+.el-dropdown-link {
+  display: flex;
 }
 </style>

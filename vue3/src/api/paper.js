@@ -20,4 +20,15 @@ const selectPaperDataAPI = (pageNum, pageSize, teacherId) => {
   return request.get('/paper/selectByPage', { params: { pageNum, pageSize, teacherId } })
 }
 
-export { addPaperAPI, selectPaperDataAPI, deleteByIdAPI, deleteBatchAPI, updatePaperAPI }
+const selectPaperByFilter = (filterCondition) => {
+  return request.post('/paper/selectByFilter', filterCondition)
+}
+
+export {
+  addPaperAPI,
+  selectPaperDataAPI,
+  deleteByIdAPI,
+  deleteBatchAPI,
+  updatePaperAPI,
+  selectPaperByFilter,
+}

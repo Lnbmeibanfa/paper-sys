@@ -75,6 +75,7 @@ const router = createRouter({
     {
       path: '/student',
       name: 'student',
+      redirect: '/student/home',
       component: () => import('@/views/FrontStudent.vue'),
       children: [
         {

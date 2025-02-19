@@ -86,6 +86,30 @@
     <select id="selectById" resultType="com.paper.entity.Paper">
         select * from `paper` where id = #{id}
     </select>
+    <select id="selectByFilter" resultMap="PaperResultMap">
+        select distinct p.*, t.name as teacherName, t.address as teacherAddress,
+        t.phone as teacherPhone, t.wechat as teacherWechat, t.qq as teacherQQ, t.email as teacherEmail,
+        t.research_direction as teacherResearchDirection, t.avatar as teacherAvatar
+        from `paper` p
+        left join `paper-sys`.paper_course pc on p.id = pc.paper_id
+        left join `paper-sys`.paper_language pl on p.id = pl.paper_id
+        left join `paper-sys`.paper_technology pt on p.id = pt.paper_id
+        left join `paper-sys`.teacher t on p.teacher_id = t.id
+        <where>
+            <if test="courseIds != null and courseIds.size() > 0">
+                and pc.course_id IN
+                <foreach collection="courseIds" item="item" open="(" close=")" separator=",">#{item}</foreach>
+            </if>
+            <if test="languageIds != null and languageIds.size() > 0">
+                and pl.language_id IN
+                <foreach collection="languageIds" item="item" open="(" close=")" separator=",">#{item}</foreach>
+            </if>
+            <if test="technologyIds != null and technologyIds.size() > 0">
+                and pl.language_id IN
+                <foreach collection="technologyIds" item="item" open="(" close=")" separator=",">#{item}</foreach>
+            </if>
+        </where>
+    </select>
 
 
 </mapper>
