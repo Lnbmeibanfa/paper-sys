@@ -8,12 +8,10 @@ import PaperStudentShower from '@/views/component/PaperStudentShower.vue'
 import { ElMessage } from 'element-plus'
 import { onMounted } from 'vue'
 
-const keyword = ref('')
 const courseData = ref(null)
 const languageData = ref(null)
 const technologyData = ref(null)
 const paperData = ref(null)
-const search = () => {}
 // 数据加载
 const loadLanguageData = () => {
   selectLanguageDataAPI().then((res) => {
@@ -53,6 +51,7 @@ const loadPaperData = () => {
 }
 // 处理筛选条件
 const filterCondition = ref({
+  keyword: '',
   courseIds: [],
   languageIds: [],
   technologyIds: [],
@@ -78,6 +77,14 @@ const toggleTechnology = (technologyId) => {
     : filterCondition.value.technologyIds.splice(index, 1)
   loadPaperData()
 }
+const clearFilter = () => {
+  filterCondition.value = {
+    courseIds: [],
+    languageIds: [],
+    technologyIds: [],
+  }
+  loadPaperData()
+}
 onMounted(() => {
   loadCourseData()
   loadLanguageData()
@@ -91,14 +98,15 @@ onMounted(() => {
     <div class="search-box">
       <div class="search-item">
         <el-input
-          v-model="keyword"
+          v-model="filterCondition.keyword"
           placeholder="搜索教师姓名，论文名"
           size="large"
           clearable
-          @keydown.enter="search"
+          @clear="loadPaperData"
+          @keydown.enter="loadPaperData"
         ></el-input>
         <div class="blank"></div>
-        <el-button type="primary" size="large" @click="search">搜索</el-button>
+        <el-button type="primary" size="large" @click="loadPaperData">搜索</el-button>
       </div>
       <div class="filter-box">
         <div class="filter-item">
@@ -163,7 +171,7 @@ onMounted(() => {
             </el-dropdown>
           </div>
         </div>
-        <div class="clear-filter"><div>清除筛选条件</div></div>
+        <div class="clear-filter" @click="clearFilter"><div>清除筛选条件</div></div>
       </div>
     </div>
     <div class="content-box">
@@ -207,9 +215,13 @@ onMounted(() => {
   display: flex;
   align-items: center;
 }
+.clear-filter:hover {
+  color: #79bbff;
+}
 .clear-filter {
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 .blank {
   width: 20px;

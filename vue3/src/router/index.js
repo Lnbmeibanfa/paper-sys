@@ -81,12 +81,17 @@ const router = createRouter({
         {
           path: 'home',
           component: () => import('@/views/student/StudentHome.vue'),
-          name: 'StudentHome',
+          name: 'studentHome',
         },
         {
           path: 'self',
           component: () => import('@/views/student/StudentSelf.vue'),
           name: 'studentSelf',
+        },
+        {
+          path: 'detail',
+          component: () => import('@/views/student/StudentPaperDetail.vue'),
+          name: 'paperDetail',
         },
       ],
     },

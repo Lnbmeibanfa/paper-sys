@@ -83,9 +83,6 @@
             <if test="studentId != null">and student_id = #{studentId}</if>
         </where>
     </select>
-    <select id="selectById" resultType="com.paper.entity.Paper">
-        select * from `paper` where id = #{id}
-    </select>
     <select id="selectByFilter" resultMap="PaperResultMap">
         select distinct p.*, t.name as teacherName, t.address as teacherAddress,
         t.phone as teacherPhone, t.wechat as teacherWechat, t.qq as teacherQQ, t.email as teacherEmail,
@@ -107,6 +104,12 @@
             <if test="technologyIds != null and technologyIds.size() > 0">
                 and pl.language_id IN
                 <foreach collection="technologyIds" item="item" open="(" close=")" separator=",">#{item}</foreach>
+            </if>
+            <if test="keyword != null">
+                t.name like concat('%', #{keyword},'%') or p.name like concat('%', #{keyword} , '%')
+            </if>
+            <if test="id != null">
+                and p.id = #{id}
             </if>
         </where>
     </select>

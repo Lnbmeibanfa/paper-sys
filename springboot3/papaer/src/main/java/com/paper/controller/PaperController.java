@@ -70,8 +70,16 @@ public class PaperController {
      * 筛选查询paper
      */
     @PostMapping("/selectByFilter")
-    public Result selectByFilter(@RequestBody  Paper paper) {
+    public Result selectByFilter(@RequestBody Paper paper) {
         List<Paper> papers = paperService.selectByFilter(paper);
         return Result.success(papers);
+    }
+
+    /**
+     * 根据id查询
+     */
+    @GetMapping("/selectById")
+    public Result selectById(Paper paper) {
+        return Result.success(paperService.selectById(paper));
     }
 }

@@ -1,13 +1,19 @@
 <script setup>
-defineProps({
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const paperData = defineProps({
   paper: Object,
 })
+const toDetail = () => {
+  router.push(`/student/detail?id=${paperData.paper.id}`)
+}
 </script>
 
 <template>
   <div class="paper_student">
     <div class="left">
-      <div class="title">{{ paper.name }}</div>
+      <div class="title" @click="toDetail">{{ paper.name }}</div>
       <div class="tags">
         <el-tag v-for="course in paper.courses" :key="course.id">{{ course.name }}</el-tag>
       </div>
@@ -24,11 +30,12 @@ defineProps({
     <div class="right">
       <div class="teacher_info">
         <div class="img-box"><img :src="paper.teacherAvatar" /></div>
-        <div class="name">{{ paper.teacherName }}</div>
-        <div class="name">{{ paper.teacherResearchDirection }}</div>
+        <div class="info">
+          <div class="name">{{ paper.teacherName }}</div>
+          <div class="direction">{{ paper.teacherResearchDirection }}</div>
+        </div>
       </div>
-      <div class="requirment">{{ paper.requirment }}</div>
-      1
+      <div class="requirment">{{ paper.requirement }}</div>
     </div>
   </div>
 </template>
@@ -48,13 +55,37 @@ defineProps({
   flex: 1;
 }
 .left .title {
+  cursor: pointer;
   font-size: 18px;
 }
 .right {
+  margin-top: 10px;
   width: 400px;
 }
+.right .info {
+  padding: 0px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
 .img-box img {
-  width: 50px;
-  height: 50px;
+  border-radius: 10px;
+  width: 75px;
+  height: 75px;
+}
+.tags {
+  margin: 10px 0px;
+}
+.el-tag {
+  margin-right: 5px;
+}
+.teacher_info {
+  display: flex;
+}
+.requirment {
+  margin: 15px 0px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>

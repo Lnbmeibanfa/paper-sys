@@ -3,6 +3,7 @@ package com.paper.service;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.paper.common.Result;
 import com.paper.common.ResultCodeEnum;
 import com.paper.entity.Paper;
 import com.paper.entity.PaperCourse;
@@ -65,10 +66,6 @@ public class PaperService {
         paperMapper.update(paper);
     }
 
-    public Paper selectById(Integer id) {
-        return paperMapper.selectById(id);
-    }
-
     private void deleteMiddleData(Integer paperId) {
         paperCourseMapper.deleteByPaperId(paperId);
         paperLanguageMapper.deleteByPaperId(paperId);
@@ -99,5 +96,13 @@ public class PaperService {
 
     public List<Paper> selectByFilter(Paper paper) {
         return paperMapper.selectByFilter(paper);
+    }
+
+    public Paper selectById(Paper paper) {
+        List<Paper> papers = paperMapper.selectByFilter(paper);
+        if (papers.size() > 1) {
+            throw new CustomException(ResultCodeEnum.SYSTEM_ERROR);
+        }
+        return papers.getFirst();
     }
 }

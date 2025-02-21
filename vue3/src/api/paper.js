@@ -21,7 +21,12 @@ const selectPaperDataAPI = (pageNum, pageSize, teacherId) => {
 }
 
 const selectPaperByFilter = (filterCondition) => {
+  console.log(filterCondition)
   return request.post('/paper/selectByFilter', filterCondition)
+}
+
+const selectPaperById = (id) => {
+  return request.get('/paper/selectById', { params: { id } })
 }
 
 export {
@@ -31,4 +36,5 @@ export {
   deleteBatchAPI,
   updatePaperAPI,
   selectPaperByFilter,
+  selectPaperById,
 }

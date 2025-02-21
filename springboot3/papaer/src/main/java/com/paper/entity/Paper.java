@@ -38,5 +38,7 @@ public class Paper {
     private String studentGroup;
     private String type;
     private Double gpa;
+    // 根据论文名或者教师名查询字段
+    private String keyword;
 
 }
