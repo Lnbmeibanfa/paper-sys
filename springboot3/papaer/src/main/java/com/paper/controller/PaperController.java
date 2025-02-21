@@ -82,4 +82,12 @@ public class PaperController {
     public Result selectById(Paper paper) {
         return Result.success(paperService.selectById(paper));
     }
+
+    /**
+     * 推荐的paper
+     */
+    @GetMapping("/recommend")
+    public Result recommend() {
+        return Result.success(paperService.recommend());
+    }
 }

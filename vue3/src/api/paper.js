@@ -29,6 +29,10 @@ const selectPaperById = (id) => {
   return request.get('/paper/selectById', { params: { id } })
 }
 
+const recommend = () => {
+  return request.get('/paper/recommend')
+}
+
 export {
   addPaperAPI,
   selectPaperDataAPI,
@@ -37,4 +41,5 @@ export {
   updatePaperAPI,
   selectPaperByFilter,
   selectPaperById,
+  recommend,
 }

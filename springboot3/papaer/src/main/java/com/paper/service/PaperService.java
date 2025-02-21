@@ -105,4 +105,9 @@ public class PaperService {
         }
         return papers.getFirst();
     }
+
+    public List<Paper> recommend() {
+        List<Paper> papers = paperMapper.selectByFilter(new Paper());
+        return papers.subList(0, 3);
+    }
 }

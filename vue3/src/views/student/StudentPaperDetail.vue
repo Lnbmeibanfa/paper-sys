@@ -1,11 +1,13 @@
 <script setup>
 import { useRoute } from 'vue-router'
-import { selectPaperById } from '@/api/paper'
+import { selectPaperById, recommend } from '@/api/paper'
+import RecommendPaperShower from '@/views/component/RecommendPaperShower.vue'
 import { ElMessage } from 'element-plus'
 import { onMounted } from 'vue'
 import { ref } from 'vue'
 const route = useRoute()
 const paper = ref({})
+const recommendData = ref({})
 const loadPaperData = () => {
   selectPaperById(route.query.id).then((res) => {
     if (res.code === '200') {
@@ -16,8 +18,18 @@ const loadPaperData = () => {
     }
   })
 }
+const loadRecommendData = () => {
+  recommend().then((res) => {
+    if (res.code === '200') {
+      recommendData.value = res.data
+    } else {
+      ElMessage.error(res.msg)
+    }
+  })
+}
 onMounted(() => {
   loadPaperData()
+  loadRecommendData()
 })
 </script>
 
@@ -83,10 +95,33 @@ onMounted(() => {
         </div>
       </div>
       <div class="aside">
-        <div class="teacher-info-box card">
-          <div class="teacher-info-title">公司基本信息</div>
+        <div class="teacher-info-box">
+          <div class="info-title">教师基本信息</div>
+          <div class="info-box">
+            <div class="img-box"><img :src="paper.teacherAvatar" alt="" /></div>
+            <div class="direction">
+              <el-icon><User /></el-icon>
+              <div>{{ paper.teacherName }}</div>
+            </div>
+            <div class="direction">
+              <el-icon><Reading /></el-icon>
+              <div>{{ paper.teacherResearchDirection }}</div>
+            </div>
+            <div class="direction">
+              <el-icon><Location /></el-icon>
+              <div>{{ paper.teacherAddress }}</div>
+            </div>
+            <div class="button">
+              <el-button type="success" plain @click="toMorePaper">查看全部论文</el-button>
+            </div>
+          </div>
         </div>
-        <div class="recommond"></div>
+        <div class="recommend">
+          <div class="info-title">推荐职位</div>
+          <div class="recommends">
+            <recommend-paper-shower v-for="paper in recommendData" :key="paper.id" :paper="paper" />
+          </div>
+        </div>
       </div>
     </main>
   </div>
@@ -113,9 +148,11 @@ onMounted(() => {
   font-weight: 600;
 }
 main {
+  display: flex;
   padding: 10px 300px;
 }
 .paper-detail {
+  flex: 1;
   padding: 20px;
 }
 .title {
@@ -132,5 +169,49 @@ main {
 }
 .tag {
   margin-right: 5px;
+}
+.aside {
+  margin-left: 10px;
+  width: 300px;
+}
+.teacher-info-box {
+  text-align: center;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 5px;
+}
+.info-title {
+  font-size: 18px;
+  font-weight: 600;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  background: linear-gradient(#f5fcfc, #fcfbfa);
+  text-align: center;
+  padding: 10px;
+}
+.teacher-info-box .info-box {
+  padding: 20px;
+}
+.teacher-info-box .img-box img {
+  border-radius: 10px;
+  width: 80px;
+  height: 80px;
+}
+.teacher-info-box .direction {
+  margin: 10px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.recommend {
+  text-align: center;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 5px;
+}
+.recommend .recommends {
+  padding: 10px;
 }
 </style>
