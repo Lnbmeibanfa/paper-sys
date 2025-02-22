@@ -1,17 +1,20 @@
 <script setup>
 import { useRoute } from 'vue-router'
 import { selectPaperById, recommend } from '@/api/paper'
+import { addCollectAPI, deleteByCollectAPI, selectByCollectAPI } from '@/api/collect'
 import RecommendPaperShower from '@/views/component/RecommendPaperShower.vue'
 import { ElMessage } from 'element-plus'
-import { onMounted } from 'vue'
+import { onMounted, watch } from 'vue'
 import { ref } from 'vue'
+import { useAccountStore } from '@/stores/account'
+const accountInfo = useAccountStore()
 const route = useRoute()
 const paper = ref({})
 const recommendData = ref({})
+const isCollect = ref(false)
 const loadPaperData = () => {
   selectPaperById(route.query.id).then((res) => {
     if (res.code === '200') {
-      console.log(res)
       paper.value = res.data
     } else {
       ElMessage.error(res.msg)
@@ -27,9 +30,53 @@ const loadRecommendData = () => {
     }
   })
 }
+const initIsCollect = () => {
+  selectByCollectAPI(accountInfo.accountInfo.id, paper.value.id).then((res) => {
+    if (res.code === '200') {
+      if (res.data !== null) {
+        isCollect.value = true
+      } else {
+        isCollect.value = false
+      }
+    }
+  })
+}
+watch(
+  () => route.query.id,
+  () => {
+    loadPaperData()
+  },
+)
+const communicate = () => {}
+const toggleCollect = () => {
+  isCollect.value = !isCollect.value
+  if (isCollect.value) {
+    const data = {
+      studentId: accountInfo.accountInfo.id,
+      paperId: paper.value.id,
+    }
+    addCollectAPI(data).then((res) => {
+      if (res.code === '200') {
+        ElMessage.success('收藏成功')
+      } else {
+        ElMessage.error(res.msg)
+      }
+    })
+  } else {
+    deleteByCollectAPI(accountInfo.accountInfo.id, paper.value.id).then((res) => {
+      if (res.code === '200') {
+        ElMessage.success('已取消收藏')
+      } else {
+        ElMessage.error(res.msg)
+      }
+    })
+  }
+}
+const toMorePaper = () => {}
 onMounted(() => {
   loadPaperData()
   loadRecommendData()
+  initIsCollect()
 })
 </script>
 
@@ -49,7 +96,14 @@ onMounted(() => {
       <div class="type box">{{ paper.type }}</div>
       <div class="resource box">{{ paper.resource }}</div>
       <div class="button-box">
-        <el-button type="primary" plain icon="star" @click="collect">感兴趣</el-button>
+        <el-button
+          type="primary"
+          :plain="!isCollect"
+          :icon="!isCollect ? 'star' : 'starFilled'"
+          @click="toggleCollect"
+          ><div v-if="isCollect">取消收藏</div>
+          <div v-else>加入收藏</div></el-button
+        >
         <el-button type="success" plain icon="chatRound" @click="communicate">立即沟通</el-button>
       </div>
     </div>
