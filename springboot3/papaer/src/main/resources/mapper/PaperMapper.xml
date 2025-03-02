@@ -93,6 +93,11 @@
         left join `paper-sys`.paper_technology pt on p.id = pt.paper_id
         left join `paper-sys`.teacher t on p.teacher_id = t.id
         <where>
+            <if test="studentId != null">
+                and p.id in (
+                select paper_id from `collect` where student_id = #{studentId}
+                )
+            </if>
             <if test="courseIds != null and courseIds.size() > 0">
                 and pc.course_id IN
                 <foreach collection="courseIds" item="item" open="(" close=")" separator=",">#{item}</foreach>
@@ -106,12 +111,18 @@
                 <foreach collection="technologyIds" item="item" open="(" close=")" separator=",">#{item}</foreach>
             </if>
             <if test="keyword != null">
-                t.name like concat('%', #{keyword},'%') or p.name like concat('%', #{keyword} , '%')
+                and (t.name like concat('%', #{keyword},'%') or p.name like concat('%', #{keyword} , '%'))
             </if>
             <if test="id != null">
                 and p.id = #{id}
             </if>
         </where>
+    </select>
+
+    <select id="selectById" resultMap="PaperResultMap">
+        select *
+        from `paper`
+        where id = #{id};
     </select>
 
 

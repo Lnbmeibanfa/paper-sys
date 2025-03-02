@@ -20,6 +20,7 @@ public interface PaperMapper {
 
     void update(Paper paper);
 
-
     List<Paper> selectByFilter(Paper paper);
+
+    Paper selectById(Integer id);
 }

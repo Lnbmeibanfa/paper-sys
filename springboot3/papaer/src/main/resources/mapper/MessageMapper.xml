@@ -1,0 +1,58 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.paper.mapper.MessageMapper">
+    <insert id="add">
+        insert into `message`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="sendId != null">send_id,</if>
+            <if test="receiverId != null">receiver_id,</if>
+            <if test="paperId != null">paper_id,</if>
+            <if test="content != null">content,</if>
+            <if test="filePath != null">file_path,</if>
+            <if test="createTime != null">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="sendId != null">#{sendId},</if>
+            <if test="receiverId != null">#{receiverId},</if>
+            <if test="paperId != null">#{paperId},</if>
+            <if test="content != null">#{content},</if>
+            <if test="type != null">#{type},</if>
+            <if test="filePath != null">#{filePath},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
+    </insert>
+    <delete id="delete">
+        delete
+        from `message`
+        where id = #{id};
+    </delete>
+
+    <update id="update">
+        update `message`
+        <set>
+            <if test="sendId != null">send_id = #{sendId},</if>
+            <if test="receiverId != null">receiver_id = #{receiverId},</if>
+            <if test="paperId != null">paper_id = #{paperId},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="filePath != null">file_path = #{filePath},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <select id="selectByPage" resultType="com.paper.entity.Message">
+        select * from `message`
+        <where>
+            <if test="name != null">and name like concat('%', #{name},'%')</if>
+        </where>
+    </select>
+    <select id="selectById" resultType="com.paper.entity.Message">
+        select * from `message` where id = #{id}
+    </select>
+</mapper>

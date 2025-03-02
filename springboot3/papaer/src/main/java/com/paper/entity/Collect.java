@@ -13,4 +13,8 @@ public class Collect {
     private Integer id;
     private Integer StudentId;
     private Integer PaperId;
+
+    public Collect(Integer id) {
+        this.StudentId = id;
+    }
 }

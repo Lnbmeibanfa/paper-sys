@@ -65,4 +65,5 @@
     <select id="selectByUsername" resultType="com.paper.entity.Student">
         select * from `student` where username = #{username}
     </select>
+    
 </mapper>

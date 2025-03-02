@@ -5,13 +5,18 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.paper.common.ResultCodeEnum;
 import com.paper.entity.Account;
+import com.paper.entity.Collect;
+import com.paper.entity.Paper;
 import com.paper.entity.Student;
 import com.paper.exception.CustomException;
+import com.paper.mapper.CollectMapper;
+import com.paper.mapper.PaperMapper;
 import com.paper.mapper.StudentMapper;
 import com.paper.util.JWTUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,6 +27,10 @@ import java.util.List;
 public class StudentService {
     @Resource
     StudentMapper studentMapper;
+    @Resource
+    CollectMapper collectMapper;
+    @Resource
+    PaperMapper paperMapper;
 
     public void add(Student student) {
         if (ObjectUtil.isEmpty(student.getRole())) {

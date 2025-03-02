@@ -7,6 +7,7 @@ import { ElMessage } from 'element-plus'
 import { onMounted, watch } from 'vue'
 import { ref } from 'vue'
 import { useAccountStore } from '@/stores/account'
+import router from '@/router'
 const accountInfo = useAccountStore()
 const route = useRoute()
 const paper = ref({})
@@ -16,6 +17,7 @@ const loadPaperData = () => {
   selectPaperById(route.query.id).then((res) => {
     if (res.code === '200') {
       paper.value = res.data
+      initIsCollect()
     } else {
       ElMessage.error(res.msg)
     }
@@ -33,7 +35,7 @@ const loadRecommendData = () => {
 const initIsCollect = () => {
   selectByCollectAPI(accountInfo.accountInfo.id, paper.value.id).then((res) => {
     if (res.code === '200') {
-      if (res.data !== null) {
+      if (res.data.length !== 0) {
         isCollect.value = true
       } else {
         isCollect.value = false
@@ -47,7 +49,9 @@ watch(
     loadPaperData()
   },
 )
-const communicate = () => {}
+const communicate = () => {
+  router.push({ name: 'studentChat' })
+}
 const toggleCollect = () => {
   isCollect.value = !isCollect.value
   if (isCollect.value) {
@@ -65,7 +69,7 @@ const toggleCollect = () => {
   } else {
     deleteByCollectAPI(accountInfo.accountInfo.id, paper.value.id).then((res) => {
       if (res.code === '200') {
-        ElMessage.success('已取消收藏')
+        ElMessage.warning('已取消收藏')
       } else {
         ElMessage.error(res.msg)
       }
@@ -76,7 +80,6 @@ const toMorePaper = () => {}
 onMounted(() => {
   loadPaperData()
   loadRecommendData()
-  initIsCollect()
 })
 </script>
 
@@ -178,6 +181,9 @@ onMounted(() => {
         </div>
       </div>
     </main>
+    <div class="dialog">
+      <el-dialog v-model="chatVisiable" :before-close="handleClose"> </el-dialog>
+    </div>
   </div>
 </template>
 

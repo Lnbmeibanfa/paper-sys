@@ -24,6 +24,10 @@ const selectByIdAPI = (id) => {
   return request.get('/student/selectById', { params: { id } })
 }
 
+const selectPaperByStudentIdAPI = (id) => {
+  return request.get('/student/selectPaperById', { params: { id } })
+}
+
 export {
   addStudentAPI,
   selectStudentDataAPI,
@@ -31,4 +35,5 @@ export {
   deleteBatchAPI,
   updateStudentAPI,
   selectByIdAPI,
+  selectPaperByStudentIdAPI,
 }

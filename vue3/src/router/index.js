@@ -93,6 +93,11 @@ const router = createRouter({
           component: () => import('@/views/student/StudentPaperDetail.vue'),
           name: 'paperDetail',
         },
+        {
+          path: 'chat',
+          component: () => import('@/views/student/StudentChat.vue'),
+          name: 'studentChat',
+        },
       ],
     },
     { path: '/login', name: 'login', component: () => import('@/views/login/AccountLogin.vue') },

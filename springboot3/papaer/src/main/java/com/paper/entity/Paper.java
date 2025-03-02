@@ -40,5 +40,7 @@ public class Paper {
     private Double gpa;
     // 根据论文名或者教师名查询字段
     private String keyword;
+    // 是否添加收藏筛选条件
+    private Boolean onlyShowCollect;
 
 }

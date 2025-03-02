@@ -7,11 +7,14 @@ import { selectPaperByFilter } from '@/api/paper'
 import PaperStudentShower from '@/views/component/PaperStudentShower.vue'
 import { ElMessage } from 'element-plus'
 import { onMounted } from 'vue'
+import { useAccountStore } from '@/stores/account'
 
+const accountInfo = useAccountStore()
 const courseData = ref(null)
 const languageData = ref(null)
 const technologyData = ref(null)
 const paperData = ref(null)
+const onlyShowCollect = ref(false)
 // 数据加载
 const loadLanguageData = () => {
   selectLanguageDataAPI().then((res) => {
@@ -77,6 +80,14 @@ const toggleTechnology = (technologyId) => {
     : filterCondition.value.technologyIds.splice(index, 1)
   loadPaperData()
 }
+const handleCollectChange = () => {
+  if (onlyShowCollect.value) {
+    filterCondition.value.studentId = accountInfo.accountInfo.id
+  } else {
+    filterCondition.value.studentId = null
+  }
+  loadPaperData()
+}
 const clearFilter = () => {
   filterCondition.value = {
     courseIds: [],
@@ -124,6 +135,7 @@ onMounted(() => {
                     v-for="course in courseData"
                     :key="course.id"
                     @click="toggleCourse(course.id)"
+                    :class="{ active: filterCondition.courseIds.includes(course.id) }"
                     >{{ course.name }}</el-dropdown-item
                   >
                 </el-dropdown-menu>
@@ -144,6 +156,7 @@ onMounted(() => {
                     v-for="language in languageData"
                     :key="language.id"
                     @click="toggleLanguage(language.id)"
+                    :class="{ active: filterCondition.languageIds.includes(language.id) }"
                     >{{ language.name }}</el-dropdown-item
                   >
                 </el-dropdown-menu>
@@ -164,6 +177,7 @@ onMounted(() => {
                     v-for="technology in technologyData"
                     :key="technology.id"
                     @click="toggleTechnology(technology.id)"
+                    :class="{ active: filterCondition.technologyIds.includes(technology.id) }"
                     >{{ technology.name }}</el-dropdown-item
                   >
                 </el-dropdown-menu>
@@ -172,6 +186,14 @@ onMounted(() => {
           </div>
         </div>
         <div class="clear-filter" @click="clearFilter"><div>清除筛选条件</div></div>
+      </div>
+      <div class="check-box">
+        <el-checkbox
+          v-model="onlyShowCollect"
+          label="仅显示我的收藏"
+          size="large"
+          @change="handleCollectChange"
+        />
       </div>
     </div>
     <div class="content-box">
@@ -228,5 +250,8 @@ onMounted(() => {
 }
 .el-dropdown-link {
   display: flex;
+}
+::v-deep .active {
+  color: #409eff;
 }
 </style>

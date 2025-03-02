@@ -21,7 +21,7 @@ const toDetail = () => {
         <el-tag v-for="language in paper.languages" :key="language.id">{{ language.name }}</el-tag>
       </div>
       <div class="tags">
-        <el-tag v-for="technology in paper.technologys" :key="technology.id">{{
+        <el-tag v-for="technology in paper.technologies" :key="technology.id">{{
           technology.name
         }}</el-tag>
       </div>

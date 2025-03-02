@@ -19,6 +19,4 @@ public interface CollectMapper {
     void update(Collect collect);
 
     List<Collect> selectByCollect(Collect collect);
-
-
 }

@@ -14,6 +14,9 @@ const quit = () => {
     router.push({ name: 'login' })
   })
 }
+const toChat = () => {
+  router.push({ name: 'studentChat' })
+}
 </script>
 
 <template>
@@ -36,12 +39,12 @@ const quit = () => {
           :ellipsis="false"
         >
           <el-menu-item index="/student/home">首页</el-menu-item>
-          <el-menu-item index="4">论文管理</el-menu-item>
+          <el-menu-item index="/student/collect">收藏管理</el-menu-item>
         </el-menu>
       </nav>
       <div class="account">
         <div class="account-box">
-          <el-icon class="message"><Bell /></el-icon>
+          <el-icon class="message" @click="toChat"><Bell /></el-icon>
           <div class="user">
             <img
               :src="
