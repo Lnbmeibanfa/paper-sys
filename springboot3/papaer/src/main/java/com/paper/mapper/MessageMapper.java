@@ -21,5 +21,6 @@ public interface MessageMapper {
     List<Message> selectByPage(Message message);
 
     Message selectById(Integer id);
-
 }
+
+

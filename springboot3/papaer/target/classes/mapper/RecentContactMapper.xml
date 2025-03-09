@@ -1,0 +1,76 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.paper.mapper.RecentContactMapper">
+    <insert id="add">
+        insert into `recent_contact`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="userRole != null">user_role,</if>
+            <if test="contactId != null">contact_id,</if>
+            <if test="contactRole != null">contact_role,</if>
+            <if test="lastMessage != null">last_message,</if>
+            <if test="lastActive != null">last_active,</if>
+            <if test="paperId != null">paper_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="userRole != null">#{userRole},</if>
+            <if test="contactId != null">#{contactId},</if>
+            <if test="contactRole != null">#{contactRole},</if>
+            <if test="lastMessage != null">#{lastMessage},</if>
+            <if test="lastActive != null">#{lastActive},</if>
+            <if test="paperId != null">#{paperId},</if>
+        </trim>
+    </insert>
+
+    <update id="update">
+        update `recent_contact`
+        <set>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="userRole != null">user_role = #{userRole},</if>
+            <if test="contactId != null">contact_id = #{contactId},</if>
+            <if test="contactRole != null">contact_role = #{contactRole},</if>
+            <if test="lastMessage != null">last_message = #{lastMessage},</if>
+            <if test="lastActive != null">last_active = #{lastActive},</if>
+            <if test="paperId != null">paper_id = #{paperId},</if>
+            <if test="selectable != null">selectable = #{selectable}</if>
+        </set>
+        <where>
+            user_id = #{userId} and user_role = #{userRole}
+        </where>
+    </update>
+
+    <update id="updateSelectable">
+        update `recent_contact`
+        <set>
+            <if test="selectable != null">selectable = #{selectable}</if>
+        </set>
+        <where>
+            (user_id = #{userId} and user_role = #{userRole})
+            or
+            (contact_id = #{userId} and contact_role = #{userRole})
+        </where>
+    </update>
+    <select id="selectByUserId" resultType="com.paper.entity.RecentContact">
+        -- 查询 send 和 receiver 之间的对话，按创建时间降序排列
+        SELECT *
+        FROM `recent_contact`
+        -- 按创建时间降序排序，最新的消息在前面
+        <where>
+            <if test="userId != null">
+                user_id = #{userId} and user_role = #{userRole}
+            </if>
+        </where>
+    </select>
+    <select id="selectAllByUserId" resultType="com.paper.entity.RecentContact">
+        select *
+        from `recent_contact`
+        <where>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+        </where>
+        order by last_active desc
+    </select>
+</mapper>

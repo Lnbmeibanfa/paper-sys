@@ -12,7 +12,7 @@ const request = axios.create({
 request.interceptors.request.use(
   (config) => {
     config.headers['Content-Type'] = 'application/json;charset-utf-8'
-    const token = JSON.parse(localStorage.getItem('account') || '{}')?.AccountInfo?.token
+    const token = JSON.parse(localStorage.getItem('account') || '{}')?.accountInfo?.token
     config.headers['token'] = token || ''
     return config
   },

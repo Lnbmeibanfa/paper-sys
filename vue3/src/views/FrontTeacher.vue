@@ -14,6 +14,9 @@ const quit = () => {
     router.push({ name: 'login' })
   })
 }
+const toChat = () => {
+  router.push('/teacher/chat')
+}
 </script>
 
 <template>
@@ -41,7 +44,7 @@ const quit = () => {
       </nav>
       <div class="account">
         <div class="account-box">
-          <el-icon class="message"><Bell /></el-icon>
+          <el-icon class="message" @click="toChat"><Bell /></el-icon>
           <div class="user">
             <img
               :src="

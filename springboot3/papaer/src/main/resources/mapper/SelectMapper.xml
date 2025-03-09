@@ -1,0 +1,46 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.paper.mapper.SelectMapper">
+    <insert id="add">
+        insert into `select`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="studentId != null">student_id,</if>
+            <if test="paperId != null">paper_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="studentId != null">#{studentId},</if>
+            <if test="paperId != null">#{paperId},</if>
+        </trim>
+    </insert>
+    <delete id="delete">
+        delete
+        from `select`
+        <where>
+            <if test="studentId != null">and student_id = #{studentId}</if>
+            <if test="paperId != null">and paper_id = #{paperId}</if>
+        </where>
+
+    </delete>
+
+    <update id="update">
+        update `select`
+        <set>
+            <if test="studentId != null">student_id = #{studentId},</if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <select id="selectBySelect" resultType="com.paper.entity.Select">
+        select * from `select`
+        <where>
+            <if test="studentId != null">and student_id = #{studentId}</if>
+            <if test="paperId != null">and paper_id = #{paperId}</if>
+        </where>
+    </select>
+
+</mapper>

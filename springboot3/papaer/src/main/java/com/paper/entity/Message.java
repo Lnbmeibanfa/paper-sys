@@ -1,6 +1,5 @@
 package com.paper.entity;
 
-import com.paper.common.enums.MessageType;
 import com.paper.common.enums.Role;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +20,5 @@ public class Message {
     private Role receiverRole;
     private Integer paperId;
     private String content;
-    private MessageType type;
-    private String filePath;
     private LocalDateTime createTime;
 }

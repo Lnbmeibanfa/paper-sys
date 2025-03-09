@@ -2,29 +2,24 @@
 import SessionContacts from '../component/SessionContacts.vue'
 import SessionMessage from '../component/SessionMessage.vue'
 import { selectMessageDataAPI } from '@/api/message'
-import { selectRecentContactDataAPI } from '@/api/recentContact'
-import { addSelectAPI } from '@/api/select'
+import { selectRecentContactDataAPI, authorSelectAPI } from '@/api/recentContact'
 import chat from '@/utils/chat'
 import '@wangeditor/editor/dist/css/style.css'
 import { onBeforeUnmount, ref, shallowRef } from 'vue'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import { useAccountStore } from '@/stores/account'
 import { onMounted } from 'vue'
-import { useRoute } from 'vue-router'
 import { reactive } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { nextTick } from 'vue'
 const pageNum = ref(1)
 const pageSize = ref(10)
-const route = useRoute()
 const accountInfo = useAccountStore()
 // 当前对话的teacherId和paperId
+const paperId = ref(null)
+const studentId = ref(null)
 // 最近会话
 const sessionData = ref(null)
-const curSession = ref({
-  paperId: null,
-  contactId: null,
-})
 // 单个会话数据
 const messageData = ref(null)
 // 发送新信息模板
@@ -32,8 +27,8 @@ const messageBuilder = reactive({
   paperId: '',
   content: '',
   receiverId: '',
-  receiverRole: 'TEACHER',
-  sendRole: 'STUDENT',
+  receiverRole: 'STUDENT',
+  sendRole: 'TEACHER',
   sendId: '',
 })
 // 加载左侧会话栏信息
@@ -53,13 +48,11 @@ const loadRecentSession = () => {
 }
 // 加载对应teacher ，paper的会话信息
 const loadMessageData = () => {
-  console.log(curSession)
   selectMessageDataAPI(
     pageNum.value,
     pageSize.value,
     accountInfo.accountInfo.id,
-    curSession.value.contactId,
-    curSession.value.paperId,
+    studentId.value,
   ).then((res) => {
     if (res.code === '200') {
       messageData.value = res.data.list
@@ -95,8 +88,9 @@ editorConfig.MENU_CONF['uploadImage'] = {
 const handleCreated = (editor) => {
   editorRef.value = editor // 记录 editor 实例，重要！
 }
-const onEnterSession = (session) => {
-  curSession.value = session
+const onEnterSession = (stuId, pId) => {
+  studentId.value = stuId
+  paperId.value = pId
   loadMessageData()
 }
 // 组件销毁时，也及时销毁编辑器
@@ -106,8 +100,7 @@ onBeforeUnmount(() => {
   editor.destroy()
 })
 onMounted(() => {
-  curSession.value.paperId = route.query.paperId || null
-  curSession.value.contactId = route.query.teacherId || null
+  console.log(paperId.value)
   loadMessageData()
   loadRecentSession()
   scrollToBottom()
@@ -118,8 +111,8 @@ const sendMsg = () => {
     ElMessage.error('不能发送空白消息')
     return
   }
-  messageBuilder.paperId = curSession.value.paperId
-  messageBuilder.receiverId = curSession.value.contactId
+  messageBuilder.paperId = paperId.value
+  messageBuilder.receiverId = studentId.value
   messageBuilder.sendId = accountInfo.accountInfo.id
   chat.send(JSON.stringify(messageBuilder))
   messageBuilder.content = ''
@@ -131,25 +124,20 @@ const sendMsg = () => {
 chat.onmessage = () => {
   loadMessageData()
 }
-const selectPaper = () => {
-  ElMessageBox.confirm('你只能选择一个论文，确认选择？', '确认选择', {
-    confirmButtonText: '确认',
-    cancelButtonText: '取消',
-    type: 'warning',
+/**允许学生选择该论文 */
+const authorSelect = () => {
+  const rc = {
+    selectable: true,
+    userId: accountInfo.accountInfo.id,
+    userRole: accountInfo.accountInfo.role,
+  }
+  authorSelectAPI(rc).then((res) => {
+    if (res.code === '200') {
+      ElMessage.success('已允许该学生选择论文')
+    } else {
+      ElMessage.error(res.msg)
+    }
   })
-    .then(() => {
-      addSelectAPI({
-        studentId: accountInfo.accountInfo.id,
-        paperId: curSession.value.paperId,
-      }).then((res) => {
-        if (res.code === '200') {
-          ElMessage.success('已经成功选择！')
-        } else {
-          ElMessage.error(res.msg)
-        }
-      })
-    })
-    .catch((err) => console.log(err))
 }
 </script>
 
@@ -170,7 +158,7 @@ const selectPaper = () => {
       </div>
       <div class="paper-info">论文名字</div>
       <el-scrollbar ref="scrollBarRef" class="message-box"
-        ><session-message v-for="message in messageData" :key="message.id" :message="message"
+        ><session-message v-for="message in messageData" :key="message.content" :message="message"
       /></el-scrollbar>
       <div class="input-box">
         <div style="border-top: 1px solid #ccc">
@@ -189,8 +177,8 @@ const selectPaper = () => {
           />
         </div>
         <div class="button-container">
-          <el-button type="primary" @click="selectPaper" v-show="curSession.selectable"
-            >选择该论文</el-button
+          <el-button type="primary" v-show="paperId !== null" @click="authorSelect"
+            >授权该学生选择论文</el-button
           >
           <el-button class="send-btn" type="success" @keydown.enter="sendMsg" @click="sendMsg"
             >发送</el-button

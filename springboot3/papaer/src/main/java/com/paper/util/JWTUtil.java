@@ -64,21 +64,28 @@ public class JWTUtil {
         try {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
             String token = request.getHeader(Constants.token);
-            String audience = JWT.decode(token).getAudience().get(0);
-            String[] userRole = audience.split("-");
-            String userId = userRole[0];
-            String role = userRole[1];
-            if (Role.ADMIN.name().equals(role)) {
-                return staticAdminService.selectById(Integer.valueOf(userId));
-            } else if (Role.TEACHER.name().equals(role)) {
-                return staticTeacherService.selectById(Integer.valueOf(userId));
-            } else if (Role.STUDENT.name().equals(role)) {
-                return staticStudentService.selectById(Integer.valueOf(userId));
-            }
+            return getAccountByToken(token);
         } catch (Exception e) {
             log.error("获取当前登录用户出错", e);
         }
         return null;
     }
 
+    /**
+     * 根据token获取用户信息
+     */
+    public static Account getAccountByToken(String token) {
+        String audience = JWT.decode(token).getAudience().getFirst();
+        String[] userRole = audience.split("-");
+        String userId = userRole[0];
+        String role = userRole[1];
+        if (Role.ADMIN.name().equals(role)) {
+            return staticAdminService.selectById(Integer.valueOf(userId));
+        } else if (Role.TEACHER.name().equals(role)) {
+            return staticTeacherService.selectById(Integer.valueOf(userId));
+        } else if (Role.STUDENT.name().equals(role)) {
+            return staticStudentService.selectById(Integer.valueOf(userId));
+        }
+        return null;
+    }
 }

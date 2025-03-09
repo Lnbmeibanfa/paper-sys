@@ -50,7 +50,7 @@ watch(
   },
 )
 const communicate = () => {
-  router.push({ name: 'studentChat' })
+  router.push(`/student/chat?teacherId=${paper.value.teacherId}&paperId=${paper.value.id}`)
 }
 const toggleCollect = () => {
   isCollect.value = !isCollect.value
@@ -181,9 +181,6 @@ onMounted(() => {
         </div>
       </div>
     </main>
-    <div class="dialog">
-      <el-dialog v-model="chatVisiable" :before-close="handleClose"> </el-dialog>
-    </div>
   </div>
 </template>
 

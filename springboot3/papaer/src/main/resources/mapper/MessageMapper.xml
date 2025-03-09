@@ -10,8 +10,9 @@
             <if test="receiverId != null">receiver_id,</if>
             <if test="paperId != null">paper_id,</if>
             <if test="content != null">content,</if>
-            <if test="filePath != null">file_path,</if>
             <if test="createTime != null">create_time,</if>
+            <if test="sendRole != null">send_role,</if>
+            <if test="receiverRole != null">receiver_role,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -19,9 +20,9 @@
             <if test="receiverId != null">#{receiverId},</if>
             <if test="paperId != null">#{paperId},</if>
             <if test="content != null">#{content},</if>
-            <if test="type != null">#{type},</if>
-            <if test="filePath != null">#{filePath},</if>
             <if test="createTime != null">#{createTime},</if>
+            <if test="sendRole != null">#{sendRole},</if>
+            <if test="receiverRole != null">#{receiverRole},</if>
         </trim>
     </insert>
     <delete id="delete">
@@ -37,20 +38,30 @@
             <if test="receiverId != null">receiver_id = #{receiverId},</if>
             <if test="paperId != null">paper_id = #{paperId},</if>
             <if test="content != null">content = #{content},</if>
-            <if test="type != null">type = #{type},</if>
-            <if test="filePath != null">file_path = #{filePath},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="sendRole != null">send_role = #{sendRole},</if>
+            <if test="receiverRole != null">receiver_role = #{receiverRole},</if>
         </set>
         <where>
             id = #{id}
         </where>
     </update>
-
     <select id="selectByPage" resultType="com.paper.entity.Message">
-        select * from `message`
+        -- 查询 send 和 receiver 之间的对话，按创建时间降序排列
+        SELECT *
+        FROM `message`
+        -- 按创建时间降序排序，最新的消息在前面
         <where>
-            <if test="name != null">and name like concat('%', #{name},'%')</if>
+            <!-- 当 sendId 不为空时，筛选出 sendId 和 receiverId 相互匹配的记录 -->
+            <if test="sendId != null">
+                (send_id = #{sendId} AND receiver_id = #{receiverId})
+                OR
+                (send_id = #{receiverId} AND receiver_id = #{sendId})
+                AND
+                (paper_id = #{paperId})
+            </if>
         </where>
+        ORDER BY create_time desc
     </select>
     <select id="selectById" resultType="com.paper.entity.Message">
         select * from `message` where id = #{id}

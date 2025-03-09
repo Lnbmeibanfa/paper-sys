@@ -70,6 +70,11 @@ const router = createRouter({
           path: 'paper',
           component: () => import('@/views/teacher/TeacherPaper.vue'),
         },
+        {
+          path: 'chat',
+          component: () => import('@/views/teacher/TeatherChat.vue'),
+          name: 'teacherChat',
+        },
       ],
     },
     {

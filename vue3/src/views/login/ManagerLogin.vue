@@ -78,6 +78,7 @@ const login = () => {
                     v-model="userInfo.password"
                     placeholder="请输入密码"
                     clearable
+                    show-password
                   ></el-input>
                 </el-form-item>
                 <el-form-item prop="checked">
