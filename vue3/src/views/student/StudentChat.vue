@@ -13,7 +13,6 @@ import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { nextTick } from 'vue'
 const pageNum = ref(1)
 const pageSize = ref(10)
 const route = useRoute()
@@ -71,9 +70,6 @@ const loadMessageData = () => {
 }
 // 滚动条实例
 const scrollBarRef = ref(null)
-const scrollToBottom = () => {
-  scrollBarRef.value.wrapRef.scrollTop = scrollBarRef.value.wrapRef.scrollHeight
-}
 /**wangEditor配置 */
 // 编辑器实例，必须用 shallowRef
 const editorRef = shallowRef()
@@ -110,7 +106,6 @@ onMounted(() => {
   curSession.value.contactId = route.query.teacherId || null
   loadMessageData()
   loadRecentSession()
-  scrollToBottom()
 })
 /** webSocket相关配置 */
 const sendMsg = () => {
@@ -124,9 +119,6 @@ const sendMsg = () => {
   chat.send(JSON.stringify(messageBuilder))
   messageBuilder.content = ''
   loadMessageData()
-  nextTick(() => {
-    scrollToBottom()
-  })
 }
 chat.onmessage = () => {
   loadMessageData()
@@ -163,12 +155,15 @@ const selectPaper = () => {
         :session="session"
       />
     </div>
-    <div class="chat-box">
+    <div v-if="curSession.paperId" class="chat-box">
       <div class="contact-info">
         <div class="teacher-name"></div>
         <div class="teacher-research-direction"></div>
       </div>
-      <div class="paper-info">论文名字</div>
+      <div class="paper-info">
+        <div>{{ curSession.paperName }}</div>
+        <div>{{ curSession.teacherName }}</div>
+      </div>
       <el-scrollbar ref="scrollBarRef" class="message-box"
         ><session-message v-for="message in messageData" :key="message.id" :message="message"
       /></el-scrollbar>
@@ -198,6 +193,7 @@ const selectPaper = () => {
         </div>
       </div>
     </div>
+    <div v-else class="chat-box"><el-empty description="请选择联系人" /></div>
   </div>
 </template>
 
@@ -237,5 +233,13 @@ const selectPaper = () => {
 }
 .send-btn {
   float: right;
+}
+.paper-info {
+  border-bottom: 1px solid #e4e4e4;
+}
+/**element */
+.el-empty {
+  width: 100%;
+  background-color: #fff;
 }
 </style>

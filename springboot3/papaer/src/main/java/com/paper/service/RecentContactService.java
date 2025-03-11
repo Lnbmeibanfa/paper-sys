@@ -5,10 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.paper.common.ResultCodeEnum;
 import com.paper.common.enums.Role;
-import com.paper.entity.Account;
-import com.paper.entity.RecentContact;
-import com.paper.entity.Student;
-import com.paper.entity.Teacher;
+import com.paper.entity.*;
 import com.paper.exception.CustomException;
 import com.paper.mapper.RecentContactMapper;
 import com.paper.util.JWTUtil;
@@ -34,6 +31,9 @@ public class RecentContactService {
 
     @Resource
     TeacherService teacherService;
+
+    @Resource
+    PaperService paperService;
     @Autowired
     private JWTUtil jWTUtil;
 
@@ -69,10 +69,14 @@ public class RecentContactService {
             if (account.getRole().equals(Role.STUDENT.name())) {
                 Integer studentId = rc.getUserId();
                 Integer teacherId = rc.getContactId();
+                Paper paper = new Paper();
+                paper.setId(rc.getPaperId());
                 Student student = studentService.selectById(studentId);
                 Teacher teacher = teacherService.selectById(teacherId);
+                Paper dbPaper = paperService.selectById(paper);
                 rc.addStudentData(student);
                 rc.addTeacherData(teacher);
+                rc.setPaperName(dbPaper.getName());
             } else if (account.getRole().equals(Role.TEACHER.name())) {
                 Integer teacherId = rc.getUserId();
                 Integer studentId = rc.getContactId();

@@ -28,7 +28,7 @@ public class SelectService {
         if (dbSelect.isEmpty()) {
             selectMapper.add(select);
         } else {
-            throw new CustomException("400", "已经收藏该论文");
+            throw new CustomException("400", "您最多只能选择一个论文");
         }
     }
 
