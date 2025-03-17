@@ -15,10 +15,12 @@ import { nextTick } from 'vue'
 const pageNum = ref(1)
 const pageSize = ref(10)
 const accountInfo = useAccountStore()
-// 当前对话的teacherId和paperId
-const paperId = ref(null)
-const studentId = ref(null)
-// 最近会话
+// 当前对话
+const curSession = ref({
+  paperId: null,
+  contactId: null,
+})
+// 最近会话数据
 const sessionData = ref(null)
 // 单个会话数据
 const messageData = ref(null)
@@ -52,7 +54,8 @@ const loadMessageData = () => {
     pageNum.value,
     pageSize.value,
     accountInfo.accountInfo.id,
-    studentId.value,
+    curSession.value.contactId,
+    curSession.value.paperId,
   ).then((res) => {
     if (res.code === '200') {
       messageData.value = res.data.list
@@ -64,9 +67,7 @@ const loadMessageData = () => {
 }
 // 滚动条实例
 const scrollBarRef = ref(null)
-const scrollToBottom = () => {
-  scrollBarRef.value.wrapRef.scrollTop = scrollBarRef.value.wrapRef.scrollHeight
-}
+const scrollToBottom = () => {}
 /**wangEditor配置 */
 // 编辑器实例，必须用 shallowRef
 const editorRef = shallowRef()
@@ -88,9 +89,8 @@ editorConfig.MENU_CONF['uploadImage'] = {
 const handleCreated = (editor) => {
   editorRef.value = editor // 记录 editor 实例，重要！
 }
-const onEnterSession = (stuId, pId) => {
-  studentId.value = stuId
-  paperId.value = pId
+const onEnterSession = (session) => {
+  curSession.value = session
   loadMessageData()
 }
 // 组件销毁时，也及时销毁编辑器
@@ -100,7 +100,6 @@ onBeforeUnmount(() => {
   editor.destroy()
 })
 onMounted(() => {
-  console.log(paperId.value)
   loadMessageData()
   loadRecentSession()
   scrollToBottom()
@@ -111,8 +110,8 @@ const sendMsg = () => {
     ElMessage.error('不能发送空白消息')
     return
   }
-  messageBuilder.paperId = paperId.value
-  messageBuilder.receiverId = studentId.value
+  messageBuilder.paperId = curSession.value.paperId
+  messageBuilder.receiverId = curSession.value.contactId
   messageBuilder.sendId = accountInfo.accountInfo.id
   chat.send(JSON.stringify(messageBuilder))
   messageBuilder.content = ''
@@ -134,6 +133,22 @@ const authorSelect = () => {
   authorSelectAPI(rc).then((res) => {
     if (res.code === '200') {
       ElMessage.success('已允许该学生选择论文')
+      curSession.value.selectable = true
+    } else {
+      ElMessage.error(res.msg)
+    }
+  })
+}
+const recusalSelect = () => {
+  const rc = {
+    selectable: false,
+    userId: accountInfo.accountInfo.id,
+    userRole: accountInfo.accountInfo.role,
+  }
+  authorSelectAPI(rc).then((res) => {
+    if (res.code === '200') {
+      ElMessage.success('已取消该学生选择论文')
+      curSession.value.selectable = false
     } else {
       ElMessage.error(res.msg)
     }
@@ -151,12 +166,14 @@ const authorSelect = () => {
         :session="session"
       />
     </div>
-    <div class="chat-box">
+    <div v-if="curSession.paperId" class="chat-box">
       <div class="contact-info">
-        <div class="teacher-name"></div>
-        <div class="teacher-research-direction"></div>
+        <div class="student-name item">{{ curSession.studentName }}</div>
+        <div class="student-research-direction item">{{ curSession.studentResearchDirection }}</div>
       </div>
-      <div class="paper-info">论文名字</div>
+      <div class="paper-info" :class="{ 'bd-btm': curSession['paperName'] !== undefined }">
+        <div>{{ curSession.paperName }}</div>
+      </div>
       <el-scrollbar ref="scrollBarRef" class="message-box"
         ><session-message v-for="message in messageData" :key="message.content" :message="message"
       /></el-scrollbar>
@@ -177,7 +194,18 @@ const authorSelect = () => {
           />
         </div>
         <div class="button-container">
-          <el-button type="primary" v-show="paperId !== null" @click="authorSelect"
+          <el-button
+            type="warning"
+            v-show="curSession.paperId !== null"
+            @click="recusalSelect"
+            v-if="curSession.selectable"
+            >取消授权学生选择论文</el-button
+          >
+          <el-button
+            type="primary"
+            v-show="curSession.paperId !== null"
+            @click="authorSelect"
+            v-else
             >授权该学生选择论文</el-button
           >
           <el-button class="send-btn" type="success" @keydown.enter="sendMsg" @click="sendMsg"
@@ -186,6 +214,7 @@ const authorSelect = () => {
         </div>
       </div>
     </div>
+    <div v-else class="chat-box"><el-empty description="请选择联系人" /></div>
   </div>
 </template>
 
@@ -221,7 +250,16 @@ const authorSelect = () => {
   height: 450px;
 }
 .contact-info {
+  color: #666;
   display: flex;
+  margin-bottom: 10px;
+}
+.paper-info {
+  padding: 10px 0px;
+  font-size: 16px;
+}
+.contact-info .item {
+  margin-right: 10px;
 }
 .send-btn {
   float: right;

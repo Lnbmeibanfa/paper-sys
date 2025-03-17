@@ -26,7 +26,7 @@ const loadLanguageData = () => {
   })
 }
 const loadTechnologyData = () => {
-  selectTechnologyDataAPI().then((res) => {
+  selectTechnologyDataAPI(1, 100).then((res) => {
     if (res.code === '200') {
       technologyData.value = res.data.list
     } else {

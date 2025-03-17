@@ -26,6 +26,9 @@ public class RecentContact {
     private String teacherName;
     private String teacherAvatar;
     private String teacherResearchDirection;
+    private String teacherEmail;
+    private String teacherWechat;
+    private String teacherQq;
     private String paperName;
     private Boolean selectable;
 
@@ -51,5 +54,8 @@ public class RecentContact {
         this.teacherName = teacher.getName();
         this.teacherAvatar = teacher.getAvatar();
         this.teacherResearchDirection = teacher.getResearchDirection();
+        this.teacherEmail = teacher.getEmail();
+        this.teacherWechat = teacher.getWechat();
+        this.teacherQq = teacher.getQq();
     }
 }

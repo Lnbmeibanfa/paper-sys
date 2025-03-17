@@ -1,8 +1,8 @@
 <script setup>
 import { selectPaperDataAPI, addPaperAPI, updatePaperAPI, deleteByIdAPI } from '@/api/paper'
-import { selectCourseDataAPI } from '@/api/course'
-import { selectLanguageDataAPI } from '@/api/language'
-import { selectTechnologyDataAPI } from '@/api/technology'
+import { selectCourseDataAPI, addCourseAPI } from '@/api/course'
+import { selectLanguageDataAPI, addLanguageAPI } from '@/api/language'
+import { selectTechnologyDataAPI, addTechnologyAPI } from '@/api/technology'
 import { ref } from 'vue'
 import { useAccountStore } from '@/stores/account'
 import { ElMessage } from 'element-plus'
@@ -19,6 +19,17 @@ const paperForm = ref({})
 const courseData = ref({})
 const languageData = ref({})
 const technologyData = ref({})
+// 所有select添加选项的状态管理
+const addStatusManager = reactive({
+  courseAdding: false,
+  languageAdding: false,
+  technologyAdding: false,
+})
+const addOptionText = reactive({
+  courseOption: '',
+  languageOption: '',
+  technologyOption: '',
+})
 const loadPaperData = () => {
   selectPaperDataAPI(null, null, accountInfo.accountInfo.id).then((res) => {
     if (res.code === '200') {
@@ -38,7 +49,7 @@ const loadLanguageData = () => {
   })
 }
 const loadTechnologyData = () => {
-  selectTechnologyDataAPI().then((res) => {
+  selectTechnologyDataAPI(1, 100).then((res) => {
     if (res.code === '200') {
       technologyData.value = res.data.list
     } else {
@@ -104,6 +115,67 @@ const handleDel = (paperId) => {
       ElMessage.error(res.msg)
     }
   })
+}
+/** 对于所有select的文本添加操作 */
+const confirmCourse = () => {
+  if (addOptionText.courseOption !== '') {
+    const course = {
+      name: addOptionText.courseOption,
+    }
+    addCourseAPI(course).then((res) => {
+      if (res.code === '200') {
+        loadCourseData()
+      } else {
+        ElMessage.error(res.msg)
+      }
+      addOptionText.courseOption = ''
+      addStatusManager.courseAdding = false
+    })
+  }
+}
+const cancelCourse = () => {
+  addOptionText.courseOption = ''
+  addStatusManager.courseAdding = false
+}
+const confirmLanguage = () => {
+  if (addOptionText.languageOption !== '') {
+    const language = {
+      name: addOptionText.languageOption,
+    }
+    addLanguageAPI(language).then((res) => {
+      if (res.code === '200') {
+        loadLanguageData()
+      } else {
+        ElMessage.error(res.msg)
+      }
+      addOptionText.languageOption = ''
+      addStatusManager.languageAdding = false
+    })
+  }
+}
+const cancelLanguage = () => {
+  addOptionText.languageOption = ''
+  addStatusManager.languageAdding = false
+}
+const confirmTechnology = () => {
+  if (addOptionText.technologyOption !== '') {
+    const technology = {
+      name: addOptionText.technologyOption,
+    }
+    addTechnologyAPI(technology).then((res) => {
+      if (res.code === '200') {
+        loadTechnologyData()
+      } else {
+        ElMessage.error(res.msg)
+      }
+      addOptionText.technologyOption = ''
+      addStatusManager.technologyAdding = false
+    })
+  }
+}
+const cancelTechnology = () => {
+  addOptionText.technologyOption = ''
+  addStatusManager.technologyAdding = false
 }
 onMounted(() => {
   loadPaperData()
@@ -191,6 +263,27 @@ onMounted(() => {
                 :value="course.id"
                 :label="course.name"
               ></el-option>
+              <template #footer>
+                <el-button
+                  v-if="!addStatusManager.courseAdding"
+                  @click="addStatusManager.courseAdding = true"
+                  text
+                  bg
+                  size="small"
+                  >添加新的课程要求</el-button
+                >
+                <template v-else>
+                  <el-input
+                    v-model="addOptionText.courseOption"
+                    placeholder="请输入新的课程要求"
+                    class="add-input"
+                    size="small"
+                    clearable
+                  ></el-input>
+                  <el-button @click="confirmCourse" type="primary" size="small">提交</el-button>
+                  <el-button @click="cancelCourse" type="warning" size="small">取消</el-button>
+                </template>
+              </template>
             </el-select>
           </el-form-item>
           <el-form-item prop="languageIds" label="编程语言要求">
@@ -200,8 +293,30 @@ onMounted(() => {
                 :key="language.id"
                 :value="language.id"
                 :label="language.name"
-              ></el-option> </el-select
-          ></el-form-item>
+              ></el-option>
+              <template #footer>
+                <el-button
+                  v-if="!addStatusManager.languageAdding"
+                  @click="addStatusManager.languageAdding = true"
+                  text
+                  bg
+                  size="small"
+                  >添加新的课程要求</el-button
+                >
+                <template v-else>
+                  <el-input
+                    v-model="addOptionText.languageOption"
+                    placeholder="请输入新的课程要求"
+                    class="add-input"
+                    size="small"
+                    clearable
+                  ></el-input>
+                  <el-button @click="confirmLanguage" type="primary" size="small">提交</el-button>
+                  <el-button @click="cancelLanguage" type="warning" size="small">取消</el-button>
+                </template>
+              </template>
+            </el-select></el-form-item
+          >
           <el-form-item prop="technologyIds" label="所需技术要求">
             <el-select v-model="paperForm.technologyIds" placeholder="请选择技术要求" multiple>
               <el-option
@@ -209,8 +324,30 @@ onMounted(() => {
                 :key="technology.id"
                 :value="technology.id"
                 :label="technology.name"
-              ></el-option> </el-select
-          ></el-form-item>
+              ></el-option>
+              <template #footer>
+                <el-button
+                  v-if="!addStatusManager.technologyAdding"
+                  @click="addStatusManager.technologyAdding = true"
+                  text
+                  bg
+                  size="small"
+                  >添加新的课程要求</el-button
+                >
+                <template v-else>
+                  <el-input
+                    v-model="addOptionText.technologyOption"
+                    placeholder="请输入新的课程要求"
+                    class="add-input"
+                    size="small"
+                    clearable
+                  ></el-input>
+                  <el-button @click="confirmTechnology" type="primary" size="small">提交</el-button>
+                  <el-button @click="cancelTechnology" type="warning" size="small">取消</el-button>
+                </template>
+              </template></el-select
+            ></el-form-item
+          >
           <el-form-item prop="requirement" label="其他要求">
             <el-input
               v-model="paperForm.requirement"
@@ -253,5 +390,8 @@ onMounted(() => {
 }
 .paper-data-show {
   width: 100%;
+}
+.add-input {
+  margin: 5px 0px;
 }
 </style>

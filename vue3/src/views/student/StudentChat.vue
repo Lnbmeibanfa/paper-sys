@@ -157,12 +157,12 @@ const selectPaper = () => {
     </div>
     <div v-if="curSession.paperId" class="chat-box">
       <div class="contact-info">
-        <div class="teacher-name"></div>
-        <div class="teacher-research-direction"></div>
+        <div class="teacher-name item">{{ curSession.teacherName }}</div>
+        <div class="teacher-research-direction item">{{ curSession.teacherResearchDirection }}</div>
+        <div class="teacher-email item">{{ curSession.teacherEmail }}</div>
       </div>
-      <div class="paper-info">
+      <div class="paper-info" :class="{ 'bd-btm': curSession['paperName'] !== undefined }">
         <div>{{ curSession.paperName }}</div>
-        <div>{{ curSession.teacherName }}</div>
       </div>
       <el-scrollbar ref="scrollBarRef" class="message-box"
         ><session-message v-for="message in messageData" :key="message.id" :message="message"
@@ -229,12 +229,21 @@ const selectPaper = () => {
   height: 450px;
 }
 .contact-info {
+  color: #666;
   display: flex;
+  margin-bottom: 10px;
+}
+.contact-info .item {
+  margin-right: 10px;
 }
 .send-btn {
   float: right;
 }
 .paper-info {
+  padding: 10px 0px;
+  font-size: 16px;
+}
+.bd-btm {
   border-bottom: 1px solid #e4e4e4;
 }
 /**element */

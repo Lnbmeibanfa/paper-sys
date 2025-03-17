@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author 林万奇
@@ -60,12 +61,44 @@ public class RecentContactService {
 
     public PageInfo<RecentContact> selectAllByPage(RecentContact recentContact, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<RecentContact> list = recentContactMapper.selectByUserId(recentContact);
+        List<RecentContact> list = recentContactMapper.selectAllByUserId(recentContact);
+        keepRoleConsistent(list);
+        addExtraInfo(list);
+        return PageInfo.of(list);
+    }
+
+    /**
+     * 处理数据，使得数据的联系人和用户保持一致。
+     * @param recentContacts 从数据库查询的list
+     */
+    private void keepRoleConsistent(List<RecentContact> recentContacts) {
         Account account = JWTUtil.getCurAccount();
         if (ObjectUtil.isNull(account)) {
             throw new CustomException(ResultCodeEnum.PARAM_LOST_ERROR);
         }
-        for (RecentContact rc : list) {
+        for (RecentContact recentContact : recentContacts) {
+            if (Objects.equals(account.getRole(), recentContact.getContactRole().name()))  {
+                Integer realUserId = recentContact.getContactId();
+                Role realUserRole = recentContact.getContactRole();
+                recentContact.setContactId(recentContact.getUserId());
+                recentContact.setContactRole(recentContact.getUserRole());
+                recentContact.setUserId(realUserId);
+                recentContact.setUserRole(realUserRole);
+            }
+        }
+    }
+
+    /**
+     * 为最近会话添加额外信息
+     * @param recentContact 在数据库查到的list
+     */
+    private void addExtraInfo(List<RecentContact> recentContact) {
+        Account account = JWTUtil.getCurAccount();
+        if (ObjectUtil.isNull(account)) {
+            throw new CustomException(ResultCodeEnum.PARAM_LOST_ERROR);
+        }
+        for (RecentContact rc : recentContact) {
+            // 如果身份是学生的话，那么查询学生信息，如果是老师那么则查询老师信息
             if (account.getRole().equals(Role.STUDENT.name())) {
                 Integer studentId = rc.getUserId();
                 Integer teacherId = rc.getContactId();
@@ -80,14 +113,16 @@ public class RecentContactService {
             } else if (account.getRole().equals(Role.TEACHER.name())) {
                 Integer teacherId = rc.getUserId();
                 Integer studentId = rc.getContactId();
+                Paper paper = new Paper();
+                paper.setId(rc.getPaperId());
                 Teacher teacher = teacherService.selectById(teacherId);
-                rc.addTeacherData(teacher);
                 Student student = studentService.selectById(studentId);
+                Paper dbPaper = paperService.selectById(paper);
+                rc.addTeacherData(teacher);
                 rc.addStudentData(student);
+                rc.setPaperName(dbPaper.getName());
             }
-
         }
-        return PageInfo.of(list);
     }
 
     public void author(RecentContact recentContact) {

@@ -59,7 +59,9 @@
         -- 按创建时间降序排序，最新的消息在前面
         <where>
             <if test="userId != null">
-                user_id = #{userId} and user_role = #{userRole}
+                (user_id = #{userId} and user_role = #{userRole})
+                or
+                (contact_id = #{userId} and contact_role = #{userRole})
             </if>
         </where>
     </select>
@@ -68,7 +70,9 @@
         from `recent_contact`
         <where>
             <if test="userId != null">
-                and user_id = #{userId}
+                (user_id = #{userId} and user_role = #{userRole})
+                or
+                (contact_id = #{userId} and contact_role = #{userRole})
             </if>
         </where>
         order by last_active desc
