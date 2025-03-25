@@ -39,7 +39,6 @@
         select * from `select`
         <where>
             <if test="studentId != null">and student_id = #{studentId}</if>
-            <if test="paperId != null">and paper_id = #{paperId}</if>
         </where>
     </select>
 

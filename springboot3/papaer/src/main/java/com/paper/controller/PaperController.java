@@ -84,6 +84,14 @@ public class PaperController {
     }
 
     /**
+     * 学生查询已经选择的paper
+     */
+    @GetMapping("/selectSelectedPaper")
+    public Result selectSelectedPaper(Paper paper) {
+        return Result.success(paperService.selectSelectedPaper(paper));
+    }
+
+    /**
      * 推荐的paper
      */
     @GetMapping("/recommend")

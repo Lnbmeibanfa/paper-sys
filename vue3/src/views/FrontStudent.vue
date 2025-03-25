@@ -39,7 +39,7 @@ const toChat = () => {
           :ellipsis="false"
         >
           <el-menu-item index="/student/home">首页</el-menu-item>
-          <el-menu-item index="/student/collect">收藏管理</el-menu-item>
+          <el-menu-item index="/student/select">我的论文</el-menu-item>
         </el-menu>
       </nav>
       <div class="account">

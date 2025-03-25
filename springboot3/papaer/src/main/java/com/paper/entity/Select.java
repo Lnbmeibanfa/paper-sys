@@ -13,4 +13,8 @@ public class Select {
     private Integer id;
     private Integer studentId;
     private Integer paperId;
+    public Select() {}
+    public Select(Integer StudentId) {
+        this.studentId = StudentId;
+    }
 }

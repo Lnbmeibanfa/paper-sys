@@ -5,15 +5,9 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.paper.common.Result;
 import com.paper.common.ResultCodeEnum;
-import com.paper.entity.Paper;
-import com.paper.entity.PaperCourse;
-import com.paper.entity.PaperLanguage;
-import com.paper.entity.PaperTechnology;
+import com.paper.entity.*;
 import com.paper.exception.CustomException;
-import com.paper.mapper.PaperCourseMapper;
-import com.paper.mapper.PaperLanguageMapper;
-import com.paper.mapper.PaperMapper;
-import com.paper.mapper.PaperTechnologyMapper;
+import com.paper.mapper.*;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +27,8 @@ public class PaperService {
     PaperLanguageMapper paperLanguageMapper;
     @Resource
     PaperTechnologyMapper paperTechnologyMapper;
+    @Resource
+    SelectService selectService;
 
     public void add(Paper paper) {
         paperMapper.add(paper);
@@ -94,16 +90,46 @@ public class PaperService {
         }
     }
 
+    /**
+     * 通过筛选器条件查询paper
+     * @param paper 主要的参数为筛选条件，如course,language,technology
+     * @return paper
+     */
     public List<Paper> selectByFilter(Paper paper) {
         return paperMapper.selectByFilter(paper);
     }
 
+    /**
+     * 直接根据PaperId查询
+     * @param paper id
+     * @return paper
+     */
     public Paper selectById(Paper paper) {
         List<Paper> papers = paperMapper.selectByFilter(paper);
         if (papers.size() > 1) {
             throw new CustomException(ResultCodeEnum.SYSTEM_ERROR);
         }
         return papers.getFirst();
+    }
+
+    /**
+     * 通过select表，查询学生选择的论文
+     * @param paper 学生id，论文id
+     * @return paper
+     */
+    public Paper selectSelectedPaper(Paper paper) {
+        Integer studentId = paper.getStudentId();
+        if (ObjectUtil.isEmpty(studentId)) {
+            throw new CustomException(ResultCodeEnum.PARAM_LOST_ERROR);
+        }
+        Select dbSelect = selectService.selectBySelect(new Select(studentId));
+        if (ObjectUtil.isNull(dbSelect)) {
+            return new Paper();
+        }
+        if (ObjectUtil.isEmpty(dbSelect.getPaperId())) {
+            throw new CustomException(ResultCodeEnum.PARAM_LOST_ERROR);
+        }
+        return selectById(new Paper(dbSelect.getPaperId()));
     }
 
     public List<Paper> recommend() {

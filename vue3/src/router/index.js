@@ -103,6 +103,11 @@ const router = createRouter({
           component: () => import('@/views/student/StudentChat.vue'),
           name: 'studentChat',
         },
+        {
+          path: 'select',
+          component: () => import('@/views/student/StudentSelect.vue'),
+          name: 'studentSelect',
+        },
       ],
     },
     { path: '/login', name: 'login', component: () => import('@/views/login/AccountLogin.vue') },

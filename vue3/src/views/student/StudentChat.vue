@@ -2,8 +2,10 @@
 import SessionContacts from '../component/SessionContacts.vue'
 import SessionMessage from '../component/SessionMessage.vue'
 import { selectMessageDataAPI } from '@/api/message'
+import { selectSelectedPaper } from '@/api/paper'
+import { authorSelectAPI } from '@/api/recentContact'
 import { selectRecentContactDataAPI } from '@/api/recentContact'
-import { addSelectAPI } from '@/api/select'
+import { addSelectAPI, deleteBySelectAPI } from '@/api/select'
 import chat from '@/utils/chat'
 import '@wangeditor/editor/dist/css/style.css'
 import { onBeforeUnmount, ref, shallowRef } from 'vue'
@@ -18,6 +20,8 @@ const pageSize = ref(10)
 const route = useRoute()
 const accountInfo = useAccountStore()
 // 当前对话的teacherId和paperId
+// 已经选择的论文
+const selectedPaper = ref(null)
 // 最近会话
 const sessionData = ref(null)
 const curSession = ref({
@@ -52,7 +56,6 @@ const loadRecentSession = () => {
 }
 // 加载对应teacher ，paper的会话信息
 const loadMessageData = () => {
-  console.log(curSession)
   selectMessageDataAPI(
     pageNum.value,
     pageSize.value,
@@ -63,6 +66,16 @@ const loadMessageData = () => {
     if (res.code === '200') {
       messageData.value = res.data.list
       messageData.value.reverse()
+    } else {
+      ElMessage.error(res.msg)
+    }
+  })
+}
+// 加载选择的论文，支持学生删除
+const loadSelectedPaper = () => {
+  selectSelectedPaper(accountInfo.accountInfo.id).then((res) => {
+    if (res.code === '200') {
+      selectedPaper.value = res.data
     } else {
       ElMessage.error(res.msg)
     }
@@ -106,6 +119,7 @@ onMounted(() => {
   curSession.value.contactId = route.query.teacherId || null
   loadMessageData()
   loadRecentSession()
+  loadSelectedPaper()
 })
 /** webSocket相关配置 */
 const sendMsg = () => {
@@ -136,6 +150,35 @@ const selectPaper = () => {
       }).then((res) => {
         if (res.code === '200') {
           ElMessage.success('已经成功选择！')
+        } else {
+          ElMessage.error(res.msg)
+        }
+      })
+    })
+    .catch((err) => console.log(err))
+}
+const delSelect = () => {
+  ElMessageBox.confirm('撤销后无法重新选择，且需要教师重新开启选择权限，确认撤销？', '确认撤销', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(() => {
+      const rc = {
+        selectable: false,
+        userId: accountInfo.accountInfo.id,
+        userRole: accountInfo.accountInfo.role,
+      }
+      deleteBySelectAPI(accountInfo.accountInfo.id, curSession.value.paperId).then((res) => {
+        if (res.code === '200') {
+          ElMessage.success('撤销选择成功')
+        } else {
+          ElMessage.error(res.msg)
+        }
+      })
+      authorSelectAPI(rc).then((res) => {
+        if (res.code === '200') {
+          ElMessage.success('已经撤销选择权')
         } else {
           ElMessage.error(res.msg)
         }
@@ -186,6 +229,12 @@ const selectPaper = () => {
         <div class="button-container">
           <el-button type="primary" @click="selectPaper" v-show="curSession.selectable"
             >选择该论文</el-button
+          >
+          <el-button
+            type="warning"
+            @click="delSelect"
+            v-show="selectedPaper !== null && curSession.paperId === selectedPaper.id"
+            >撤销选择该论文</el-button
           >
           <el-button class="send-btn" type="success" @keydown.enter="sendMsg" @click="sendMsg"
             >发送</el-button

@@ -1,5 +1,6 @@
 package com.paper.service;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.paper.common.ResultCodeEnum;
@@ -38,9 +39,17 @@ public class SelectService {
         return PageInfo.of(list);
     }
 
-    public List<Select> selectBySelect(Select select) {
-        return selectMapper.selectBySelect(select);
+    public Select selectBySelect(Select select) {
+        List<Select> dbSelect = selectMapper.selectBySelect(select);
+        if (ObjectUtil.isEmpty(dbSelect)) {
+            return null;
+        }
+        if (dbSelect.size() > 1) {
+            throw new CustomException(ResultCodeEnum.SYSTEM_ERROR);
+        }
+        return dbSelect.getFirst();
     }
+
 
     public void deleteBySelect(Integer studentId, Integer paperId) {
         selectMapper.delete(studentId, paperId);

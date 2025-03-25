@@ -95,12 +95,13 @@ const enterSession = () => {
   border-radius: 50%;
 }
 .info-box {
-  display: flex;
   flex: 1;
+  display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 .last-active {
+  width: 80px;
   color: #999999;
 }
 </style>

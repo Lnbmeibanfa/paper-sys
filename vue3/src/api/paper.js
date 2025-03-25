@@ -20,13 +20,29 @@ const selectPaperDataAPI = (pageNum, pageSize, teacherId) => {
   return request.get('/paper/selectByPage', { params: { pageNum, pageSize, teacherId } })
 }
 
+/**
+ * @param {*} filterCondition {
+    keyword: '',
+    courseIds: [],
+    languageIds: [],
+    technologyIds: [],
+  }
+ * @returns List<paper>
+ */
 const selectPaperByFilter = (filterCondition) => {
-  console.log(filterCondition)
   return request.post('/paper/selectByFilter', filterCondition)
 }
 
 const selectPaperById = (id) => {
   return request.get('/paper/selectById', { params: { id } })
+}
+/**
+ * 查询学生选择的论文
+ * @param  studentId 学生id
+ * @returns paper
+ */
+const selectSelectedPaper = (studentId) => {
+  return request.get('/paper/selectSelectedPaper', { params: { studentId } })
 }
 
 const recommend = () => {
@@ -41,5 +57,6 @@ export {
   updatePaperAPI,
   selectPaperByFilter,
   selectPaperById,
+  selectSelectedPaper,
   recommend,
 }

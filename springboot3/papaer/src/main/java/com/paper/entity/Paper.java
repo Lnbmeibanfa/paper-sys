@@ -42,5 +42,9 @@ public class Paper {
     private String keyword;
     // 是否添加收藏筛选条件
     private Boolean onlyShowCollect;
-
+    public  Paper() {
+    }
+    public Paper(Integer id) {
+        this.id = id;
+    }
 }

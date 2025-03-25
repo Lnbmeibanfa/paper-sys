@@ -13,7 +13,7 @@ const toDetail = () => {
 <template>
   <div class="paper_student">
     <div class="left">
-      <div class="title" @click="toDetail">{{ paper.name }}</div>
+      <div class="title" @click="toDetail">{{ paperData.paper.name }}</div>
       <div class="tags">
         <el-tag v-for="course in paper.courses" :key="course.id">{{ course.name }}</el-tag>
       </div>
