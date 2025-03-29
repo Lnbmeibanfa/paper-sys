@@ -11,10 +11,11 @@ import lombok.Setter;
 @Setter
 public class Collect {
     private Integer id;
-    private Integer StudentId;
-    private Integer PaperId;
+    private Integer studentId;
+    private Integer paperId;
+    public  Collect(){}
 
     public Collect(Integer id) {
-        this.StudentId = id;
+        this.studentId = id;
     }
 }

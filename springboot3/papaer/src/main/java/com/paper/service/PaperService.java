@@ -1,5 +1,6 @@
 package com.paper.service;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -8,10 +9,18 @@ import com.paper.common.ResultCodeEnum;
 import com.paper.entity.*;
 import com.paper.exception.CustomException;
 import com.paper.mapper.*;
+import com.paper.util.JWTUtil;
+import com.paper.util.UserCF;
 import jakarta.annotation.Resource;
+import org.springframework.context.annotation.Role;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.Position;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author 林万奇
@@ -29,6 +38,12 @@ public class PaperService {
     PaperTechnologyMapper paperTechnologyMapper;
     @Resource
     SelectService selectService;
+    @Resource
+    StudentMapper studentMapper;
+    @Resource
+    CollectMapper collectMapper;
+    @Resource
+    SelectMapper selectMapper;
 
     public void add(Paper paper) {
         paperMapper.add(paper);
@@ -132,8 +147,65 @@ public class PaperService {
         return selectById(new Paper(dbSelect.getPaperId()));
     }
 
+    /**
+     * 推荐岗位(基于协同过滤推荐算法，皮尔逊常数)
+     * @return 推荐的position
+     */
     public List<Paper> recommend() {
+        Account curStudent = JWTUtil.getCurAccount();
+
+        // 1.获取所有的学生信息
+        List<Student> students = studentMapper.selectByPage(new Student());
+        // 2.获取所有论文信息
         List<Paper> papers = paperMapper.selectByFilter(new Paper());
-        return papers.subList(0, 3);
+        // 3.获取所有的收藏信息
+        List<Collect> collects = collectMapper.selectByCollect(new Collect());
+        // 4.获取所有的选择信息
+        List<Select> selects = selectMapper.selectBySelect(new Select());
+        // 存储所有的用户和所有岗位指数之间的数据
+        List<RelateDTO> data = new ArrayList<>();
+
+        for (Paper paper : papers) {
+            Integer paperId = paper.getId();
+            for (Student student : students) {
+                Integer studentId = student.getId();
+                int index = 1;
+                // 如果该用户收藏过，权重+1
+                List<Collect> collectList = collects.stream()
+                        .filter(x -> x.getPaperId().equals(paperId) && x.getStudentId().equals(studentId))
+                        .toList();
+                if (CollectionUtil.isNotEmpty(collectList)) {
+                    index += 1;
+                }
+                List<Select> selectList = selects.stream()
+                        .filter(x -> x.getPaperId().equals(paperId) && x.getStudentId().equals(studentId))
+                        .toList();
+                if (CollectionUtil.isNotEmpty(selectList)) {
+                    index += 2;
+                }
+                if (index > 1) {
+                    RelateDTO relateDTO = new RelateDTO(studentId, paperId, index);
+                    data.add(relateDTO);
+                }
+            }
+        }
+        // 基于用户行为的UserCF推荐方法获取到被推荐岗位id的list
+        List<Integer> paperIds = UserCF.recommend(curStudent.getId(), data);
+        // 把list里的id变成position
+        List<Paper> result = papers.stream().filter(x -> paperIds.contains(x.getId())).toList();
+        if (CollectionUtil.isNotEmpty(result)) {
+            result = getRandomPaper(3, papers, result);
+        }
+        if (result.size() < 3) {
+            result = getRandomPaper(3 - result.size(), papers, result);
+        }
+        return result;
+    }
+    public List<Paper> getRandomPaper(int num, List<Paper> papers, List<Paper> result) {
+        Collections.shuffle(papers);
+        if (CollectionUtil.isNotEmpty(result)) {
+            papers = papers.stream().filter(x -> !result.contains(x)).collect(Collectors.toList());
+        }
+        return papers.size() > num ? papers.subList(0, num) : papers;
     }
 }

@@ -12,8 +12,8 @@ const updateCollectAPI = (data) => {
   return request.put('/collect/update', data)
 }
 
-const selectByCollectAPI = (stduentId, paperId) => {
-  return request.get('/collect/selectByCollect', { params: { stduentId, paperId } })
+const selectByCollectAPI = (studentId, paperId) => {
+  return request.get('/collect/selectByCollect', { params: { studentId, paperId } })
 }
 
 export { addCollectAPI, selectByCollectAPI, deleteByCollectAPI, updateCollectAPI }

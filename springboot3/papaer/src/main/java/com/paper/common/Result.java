@@ -10,8 +10,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Result {
+    // 状态码
     private String code;
+    // 提示信息
     private String msg;
+    // 返回数据
     private Object data;
     public Result() {}
     public Result(String code, String msg, Object data) {
