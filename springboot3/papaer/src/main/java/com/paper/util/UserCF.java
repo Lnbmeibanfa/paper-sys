@@ -3,10 +3,7 @@ package com.paper.util;
 import cn.hutool.core.collection.CollectionUtil;
 import com.paper.entity.RelateDTO;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -34,11 +31,11 @@ public class UserCF {
             return Collections.emptyList();
         }
         // 最近邻用户有关联的论文列表
-        List<Integer> neighborItems = userMap.get(nearestUserId).stream().map(RelateDTO::getPaperId).toList();
+        List<Integer> neighborItems = userMap.get(nearestUserId).stream().map(RelateDTO::getPaperId).collect(Collectors.toCollection(ArrayList::new));
         // 指定用户关联的论文列表
-        List<Integer> userItems = userMap.get(userId).stream().map(RelateDTO::getPaperId).toList();
-//        // 找到最近邻有关联的，但是该用户没关联的岗位
-//        neighborItems.removeAll(userItems);
+        List<Integer> userItems = userMap.get(userId).stream().map(RelateDTO::getPaperId).collect(Collectors.toCollection(ArrayList::new));
+        // 排除用户已经选择的论文
+        neighborItems.removeAll(userItems);
         return neighborItems;
     }
 }

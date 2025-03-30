@@ -193,7 +193,7 @@ public class PaperService {
         List<Integer> paperIds = UserCF.recommend(curStudent.getId(), data);
         // 把list里的id变成position
         List<Paper> result = papers.stream().filter(x -> paperIds.contains(x.getId())).toList();
-        if (CollectionUtil.isNotEmpty(result)) {
+        if (CollectionUtil.isEmpty(result)) {
             result = getRandomPaper(3, papers, result);
         }
         if (result.size() < 3) {

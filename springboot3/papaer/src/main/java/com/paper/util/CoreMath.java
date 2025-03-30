@@ -57,7 +57,25 @@ public class CoreMath {
                 }
             }
         }));
-        return getRelate(xs, ys);
+        return cosineSimilarity(xs, ys);
+    }
+
+    /**
+     * 余弦相似度计算方法
+     * @param xs x集合
+     * @param ys y集合
+     * @return  {@link double}
+     */
+    public static double cosineSimilarity(List<Integer> xs, List<Integer> ys) {
+        double dotProduct = 0.0;
+        double normA = 0.0;
+        double normB = 0.0;
+        for (int i = 0; i < xs.size(); i++) {
+            dotProduct += xs.get(i) * ys.get(i);
+            normA += Math.pow(xs.get(i), 2);
+            normB += Math.pow(ys.get(i), 2);
+        }
+        return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
     }
 
     /**
@@ -65,13 +83,25 @@ public class CoreMath {
      * @param xs x集合
      * @param ys y集合
      * Return  {@link double}
-     * @author B站 UP：武哥聊编程
      */
     public static double getRelate(List<Integer> xs, List<Integer> ys) {
         int n = xs.size();
         //至少有两个元素
         if (n < 2) {
             return 0D;
+        }
+
+        // 计算标准差
+        double stdX = standardDeviation(xs);
+        double stdY = standardDeviation(ys);
+
+        // 处理某一方标准差为0的情况
+        if (stdX == 0 && stdY == 0) {
+            // 双方全为相同值，视为完全正相关
+            return 1.0;
+        } else if (stdX == 0 || stdY == 0) {
+            // 仅一方无变化，视为无相关性
+            return 0.0;
         }
         double Ex = xs.stream().mapToDouble(x -> x).sum();
         double Ey = ys.stream().mapToDouble(y -> y).sum();
@@ -84,5 +114,11 @@ public class CoreMath {
             return 0D;
         }
         return numerator / denominator;
+    }
+
+    private static double standardDeviation(List<Integer> list) {
+        double mean = list.stream().mapToDouble(x -> x).average().orElse(0);
+        double variance = list.stream().mapToDouble(x -> Math.pow(x - mean, 2)).sum() / list.size();
+        return Math.sqrt(variance);
     }
 }
