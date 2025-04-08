@@ -2,7 +2,9 @@ package com.paper.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.paper.common.Result;
+import com.paper.entity.Paper;
 import com.paper.entity.Teacher;
+import com.paper.service.PaperService;
 import com.paper.service.TeacherService;
 import jakarta.annotation.Resource;
 import lombok.Getter;
@@ -19,7 +21,8 @@ import java.util.List;
 public class TeacherController {
     @Resource
     TeacherService teacherService;
-
+    @Resource
+    PaperService paperService;
     /**
      * 添加teacher
      */
@@ -73,5 +76,13 @@ public class TeacherController {
     public Result selectById(@RequestParam Integer id) {
         Teacher teacher = teacherService.selectById(id);
         return Result.success(teacher);
+    }
+    /**
+     * 根据id查询该id下所属论文数量
+     */
+    @GetMapping("/selectPaperById")
+    public Result selectPaperById(Integer id) {
+        List<Paper> papers = paperService.selectByFilter(new Paper(null, id));
+        return Result.success(papers.size());
     }
 }

@@ -24,6 +24,10 @@ const selectByIdAPI = (id) => {
   return request.get('/teacher/selectById', { params: { id } })
 }
 
+const getPaperCountById = (id) => {
+  return request.get('/teacher/selectPaperById', { params: { id } })
+}
+
 export {
   addTeacherAPI,
   selectTeacherDataAPI,
@@ -31,4 +35,5 @@ export {
   deleteBatchAPI,
   updateTeacherAPI,
   selectByIdAPI,
+  getPaperCountById,
 }

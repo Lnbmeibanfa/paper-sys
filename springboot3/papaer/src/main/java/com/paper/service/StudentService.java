@@ -27,10 +27,6 @@ import java.util.List;
 public class StudentService {
     @Resource
     StudentMapper studentMapper;
-    @Resource
-    CollectMapper collectMapper;
-    @Resource
-    PaperMapper paperMapper;
 
     public void add(Student student) {
         if (ObjectUtil.isEmpty(student.getRole())) {
@@ -73,6 +69,10 @@ public class StudentService {
 
     public Student selectById(Integer id) {
         return studentMapper.selectById(id);
+    }
+
+    public List<Student> selectAll() {
+        return studentMapper.selectByPage(new Student());
     }
 
     public Account login(Account account) {

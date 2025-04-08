@@ -55,5 +55,13 @@ public class SelectService {
         selectMapper.delete(studentId, paperId);
     }
 
+    public List<Select> selectAll() {
+        List<Select> dbSelect = selectMapper.selectBySelect(new Select());
+        if (ObjectUtil.isEmpty(dbSelect)) {
+            return null;
+        }
+        return dbSelect;
+    }
+
 
 }

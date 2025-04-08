@@ -116,6 +116,9 @@
             <if test="id != null">
                 and p.id = #{id}
             </if>
+            <if test="teacherId != null">
+                and t.id = #{teacherId}
+            </if>
         </where>
     </select>
 

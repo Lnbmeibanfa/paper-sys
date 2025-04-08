@@ -144,7 +144,7 @@ public class PaperService {
         if (ObjectUtil.isEmpty(dbSelect.getPaperId())) {
             throw new CustomException(ResultCodeEnum.PARAM_LOST_ERROR);
         }
-        return selectById(new Paper(dbSelect.getPaperId()));
+        return selectById(new Paper(dbSelect.getPaperId(), null));
     }
 
     /**

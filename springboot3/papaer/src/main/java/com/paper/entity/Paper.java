@@ -44,7 +44,8 @@ public class Paper {
     private Boolean onlyShowCollect;
     public  Paper() {
     }
-    public Paper(Integer id) {
+    public Paper(Integer id, Integer teacherId) {
         this.id = id;
+        this.teacherId = teacherId;
     }
 }

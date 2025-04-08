@@ -19,5 +19,25 @@ const updateAdminAPI = (data) => {
 const selectAdminDataAPI = (pageNum, pageSize, name) => {
   return request.get('/admin/selectByPage', { params: { pageNum, pageSize, name } })
 }
-
-export { addAdminAPI, selectAdminDataAPI, deleteByIdAPI, deleteBatchAPI, updateAdminAPI }
+// 查询所有论文数量
+const getAllPaper = () => {
+  return request.get('/admin/publishedPaper')
+}
+// 查询选择论文数量
+const getSelectedPaper = () => {
+  return request.get('/admin/selectedPaper')
+}
+// 查询所有学生数量
+const getAllStudent = () => {
+  return request.get('/admin/studentCount')
+}
+export {
+  addAdminAPI,
+  selectAdminDataAPI,
+  deleteByIdAPI,
+  deleteBatchAPI,
+  updateAdminAPI,
+  getAllPaper,
+  getSelectedPaper,
+  getAllStudent,
+}
