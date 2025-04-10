@@ -76,7 +76,9 @@ const toggleCollect = () => {
     })
   }
 }
-const toMorePaper = () => {}
+const toMorePaper = () => {
+  router.push(`/student/papers?teacherId=${paper.value.teacherId}`)
+}
 onMounted(() => {
   loadPaperData()
   loadRecommendData()
