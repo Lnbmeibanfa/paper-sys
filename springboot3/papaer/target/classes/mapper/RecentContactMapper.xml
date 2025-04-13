@@ -37,7 +37,12 @@
             <if test="selectable != null">selectable = #{selectable}</if>
         </set>
         <where>
-            user_id = #{userId} and user_role = #{userRole}
+            <if test="userId != null and contactId != null">
+                (user_id = #{userId} and user_role = #{userRole})
+                and
+                (contact_id = #{contactId} and contact_role = #{contactRole})
+            </if>
+
         </where>
     </update>
 
@@ -52,16 +57,20 @@
             (contact_id = #{userId} and contact_role = #{userRole})
         </where>
     </update>
-    <select id="selectByUserId" resultType="com.paper.entity.RecentContact">
+    <select id="selectByUserAndContact" resultType="com.paper.entity.RecentContact">
         -- 查询 send 和 receiver 之间的对话，按创建时间降序排列
         SELECT *
         FROM `recent_contact`
         -- 按创建时间降序排序，最新的消息在前面
         <where>
             <if test="userId != null">
-                (user_id = #{userId} and user_role = #{userRole})
+                ((user_id = #{userId} and user_role = #{userRole})
+                and
+                (contact_id = #{contactId} and contact_role = #{contactRole}))
                 or
-                (contact_id = #{userId} and contact_role = #{userRole})
+                ((user_id = #{contactId} and user_role = #{contactRole})
+                and
+                (contact_id = #{userId} and contact_role = #{userRole}))
             </if>
         </where>
     </select>

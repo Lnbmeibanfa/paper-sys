@@ -43,7 +43,7 @@ public class RecentContactService {
         if (ObjectUtil.isEmpty(userId)) {
             throw new CustomException(ResultCodeEnum.PARAM_ERROR);
         }
-        List<RecentContact> dbRecentContact = recentContactMapper.selectByUserId(recentContact);
+        List<RecentContact> dbRecentContact = recentContactMapper.selectByUserAndContact(recentContact);
         if (ObjectUtil.isEmpty(dbRecentContact)) {
             recentContactMapper.add(recentContact);
         } else {

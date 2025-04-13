@@ -19,7 +19,7 @@ public interface RecentContactMapper {
 
     void updateSelectable(RecentContact recentContact);
 
-    List<RecentContact> selectByUserId(RecentContact recentContact);
+    List<RecentContact> selectByUserAndContact(RecentContact recentContact);
 
     List<RecentContact> selectAllByUserId(RecentContact recentContact);
 }

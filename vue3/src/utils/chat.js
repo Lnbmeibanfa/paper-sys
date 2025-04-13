@@ -7,6 +7,8 @@ chat.onopen = () => {
   console.log('open')
 }
 
-chat.onmessage = () => {}
+chat.onmessage = () => {
+  console.log('onMess')
+}
 
 export default chat
