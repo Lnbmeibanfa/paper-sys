@@ -67,6 +67,7 @@ public class CoreMath {
      * @return  {@link double}
      */
     public static double cosineSimilarity(List<Integer> xs, List<Integer> ys) {
+
         double dotProduct = 0.0;
         double normA = 0.0;
         double normB = 0.0;

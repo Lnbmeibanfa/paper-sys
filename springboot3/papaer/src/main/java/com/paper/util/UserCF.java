@@ -24,16 +24,19 @@ public class UserCF {
         }
         // 获取关系最近的用户
         double maxValue = Collections.max(userDisMap.values());
-        Set<Integer> userIds = userDisMap.entrySet().stream().filter(e -> e.getValue() == maxValue).map(Map.Entry::getKey).collect(Collectors.toSet());
+        Set<Integer> userIds = userDisMap.entrySet().stream().filter(e -> e.getValue() == maxValue)
+                .map(Map.Entry::getKey).collect(Collectors.toSet());
         // 取关系最近的用户
         Integer nearestUserId = userIds.stream().findAny().orElse(null);
         if (nearestUserId == null) {
             return Collections.emptyList();
         }
         // 最近邻用户有关联的论文列表
-        List<Integer> neighborItems = userMap.get(nearestUserId).stream().map(RelateDTO::getPaperId).collect(Collectors.toCollection(ArrayList::new));
+        List<Integer> neighborItems = userMap.get(nearestUserId).stream().map(RelateDTO::getPaperId)
+                .collect(Collectors.toCollection(ArrayList::new));
         // 指定用户关联的论文列表
-        List<Integer> userItems = userMap.get(userId).stream().map(RelateDTO::getPaperId).collect(Collectors.toCollection(ArrayList::new));
+        List<Integer> userItems = userMap.get(userId).stream().map(RelateDTO::getPaperId)
+                .collect(Collectors.toCollection(ArrayList::new));
         // 排除用户已经选择的论文
         neighborItems.removeAll(userItems);
         return neighborItems;
