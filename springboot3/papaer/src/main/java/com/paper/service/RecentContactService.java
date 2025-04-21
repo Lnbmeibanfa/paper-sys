@@ -1,5 +1,6 @@
 package com.paper.service;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -14,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -56,7 +59,14 @@ public class RecentContactService {
     }
 
     public void add(RecentContact recentContact) {
-        // 检查是否已经插入了，没插入则插入，插入了则报错
+        RecentContact rc = selectRCByKey(recentContact);
+        if (rc != null) {
+            throw new CustomException("400", "当前会话已经存在！");
+        }
+        else {
+            recentContact.setLastActive(LocalDateTime.now());
+            recentContactMapper.add(recentContact);
+        }
     }
 
     public PageInfo<RecentContact> selectAllByPage(RecentContact recentContact, int pageNum, int pageSize) {
@@ -126,6 +136,23 @@ public class RecentContactService {
     }
 
     public void author(RecentContact recentContact) {
+        List<RecentContact> dbRC = recentContactMapper.selectByPaperId(recentContact);
+        for (RecentContact rc : dbRC) {
+            if (rc.getSelectable()) {
+                throw new CustomException("400", "该论文已经被选择！");
+            }
+        }
         recentContactMapper.updateSelectable(recentContact);
+    }
+
+    public RecentContact selectRCByKey(RecentContact recentContact) {
+        List<RecentContact> dbRC = recentContactMapper.selectByUserAndContact(recentContact);
+        if (ObjectUtil.isEmpty(dbRC)) {
+            return null;
+        } else if (dbRC.size() > 1) {
+            throw new CustomException(ResultCodeEnum.SYSTEM_ERROR);
+        } else {
+            return dbRC.getFirst();
+        }
     }
 }

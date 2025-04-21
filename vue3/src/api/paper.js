@@ -21,7 +21,7 @@ const selectPaperDataAPI = (pageNum, pageSize, teacherId) => {
 }
 
 /**
- * @param {*} filterCondition {
+ * @param {*} filterCondition            {
     keyword: '',
     courseIds: [],
     languageIds: [],

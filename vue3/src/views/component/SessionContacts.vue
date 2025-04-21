@@ -57,10 +57,17 @@ const enterSession = () => {
         <img :src="session.teacherAvatar" alt="" />
       </div>
       <div class="info-box">
+        <div>{{ session.paperName }}</div>
         <div>{{ session.teacherName }}</div>
-        <div>{{ session.teacherResearchDirection }}</div>
       </div>
-      <div class="last-active">{{ formatDate }}</div>
+
+      <div class="last-active">
+        <div>{{ formatDate }}</div>
+        <div>
+          <el-tag type="success" v-if="session.selectable">已选择</el-tag>
+          <el-tag type="info" v-else>沟通中</el-tag>
+        </div>
+      </div>
     </div>
     <div class="session-contacts" v-else>
       <div class="img-box">
@@ -68,6 +75,10 @@ const enterSession = () => {
       </div>
       <div class="info-box">
         <div>{{ session.studentName }}</div>
+        <div>
+          <el-tag type="success" v-if="session.selectable">已选择</el-tag>
+          <el-tag type="info" v-else>沟通中</el-tag>
+        </div>
       </div>
       <div class="last-active">{{ formatDate }}</div>
     </div>

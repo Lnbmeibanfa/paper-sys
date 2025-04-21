@@ -4,7 +4,7 @@ import SessionMessage from '../component/SessionMessage.vue'
 import { selectMessageDataAPI } from '@/api/message'
 import { selectSelectedPaper } from '@/api/paper'
 import { authorSelectAPI } from '@/api/recentContact'
-import { selectRecentContactDataAPI } from '@/api/recentContact'
+import { selectRecentContactDataAPI, addRecentContactAPI } from '@/api/recentContact'
 import { addSelectAPI, deleteBySelectAPI } from '@/api/select'
 import chat from '@/utils/chat'
 import '@wangeditor/editor/dist/css/style.css'
@@ -115,11 +115,34 @@ onBeforeUnmount(() => {
   editor.destroy()
 })
 onMounted(() => {
-  curSession.value.paperId = route.query.paperId || null
-  curSession.value.contactId = route.query.teacherId || null
-  loadMessageData()
-  loadRecentSession()
-  loadSelectedPaper()
+  if (route.query.paperId !== undefined && route.query.teacherId !== undefined) {
+    curSession.value.paperId = route.query.paperId
+    curSession.value.contactId = route.query.teacherId
+    const rc = {
+      userId: accountInfo.accountInfo.id,
+      userRole: accountInfo.accountInfo.role,
+      contactId: route.query.teacherId,
+      contactRole: 'TEACHER',
+      paperId: route.query.paperId,
+    }
+    addRecentContactAPI(rc).then((res) => {
+      if (res.code === '200') {
+        ElMessage.success('创建新会话成功')
+        loadRecentSession()
+        loadMessageData()
+        loadSelectedPaper()
+      } else {
+        ElMessage.error(res.msg)
+        loadRecentSession()
+        loadMessageData()
+        loadSelectedPaper()
+      }
+    })
+  } else {
+    loadRecentSession()
+    loadMessageData()
+    loadSelectedPaper()
+  }
 })
 /** webSocket相关配置 */
 const sendMsg = () => {
@@ -259,7 +282,7 @@ const delSelect = () => {
   margin: 10px auto;
 }
 .contacts {
-  width: 300px;
+  width: 350px;
   border-radius: 10px;
   padding: 20px;
   background-color: #fff;

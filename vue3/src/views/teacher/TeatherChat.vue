@@ -129,6 +129,9 @@ const authorSelect = () => {
     selectable: true,
     userId: accountInfo.accountInfo.id,
     userRole: accountInfo.accountInfo.role,
+    contactId: curSession.value.contactId,
+    contactRole: curSession.value.contactRole,
+    paperId: curSession.value.paperId,
   }
   authorSelectAPI(rc).then((res) => {
     if (res.code === '200') {
@@ -144,6 +147,9 @@ const recusalSelect = () => {
     selectable: false,
     userId: accountInfo.accountInfo.id,
     userRole: accountInfo.accountInfo.role,
+    contactId: curSession.value.contactId,
+    contactRole: curSession.value.contactRole,
+    paperId: curSession.value.paperId,
   }
   authorSelectAPI(rc).then((res) => {
     if (res.code === '200') {
@@ -199,14 +205,14 @@ const recusalSelect = () => {
             v-show="curSession.paperId !== null"
             @click="recusalSelect"
             v-if="curSession.selectable"
-            >取消授权学生选择论文</el-button
+            >取消选择该同学</el-button
           >
           <el-button
             type="primary"
             v-show="curSession.paperId !== null"
             @click="authorSelect"
             v-else
-            >授权该学生选择论文</el-button
+            >选择该同学</el-button
           >
           <el-button class="send-btn" type="success" @keydown.enter="sendMsg" @click="sendMsg"
             >发送</el-button

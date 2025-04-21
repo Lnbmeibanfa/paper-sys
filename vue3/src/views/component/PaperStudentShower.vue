@@ -4,9 +4,16 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const paperData = defineProps({
   paper: Object,
+  toChat: {
+    type: Boolean,
+    default: false,
+  },
 })
 const toDetail = () => {
   router.push(`/student/detail?id=${paperData.paper.id}`)
+}
+const chat = () => {
+  router.push(`/student/chat?paperId=${paperData.paper.id}&teacherId=${paperData.paper.teacherId}`)
 }
 </script>
 
@@ -28,14 +35,19 @@ const toDetail = () => {
       <div class="resource_type">{{ paper.resource }} | {{ paper.type }}</div>
     </div>
     <div class="right">
-      <div class="teacher_info">
-        <div class="img-box"><img :src="paper.teacherAvatar" /></div>
-        <div class="info">
-          <div class="name">{{ paper.teacherName }}</div>
-          <div class="direction">{{ paper.teacherResearchDirection }}</div>
+      <div class="content">
+        <div class="teacher_info">
+          <div class="img-box"><img :src="paper.teacherAvatar" /></div>
+          <div class="info">
+            <div class="name">{{ paper.teacherName }}</div>
+            <div class="direction">{{ paper.teacherResearchDirection }}</div>
+          </div>
         </div>
+        <div class="requirment">{{ paper.requirement }}</div>
       </div>
-      <div class="requirment">{{ paper.requirement }}</div>
+      <div class="button" v-if="toChat">
+        <el-button type="primary" @click="chat">发起沟通</el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -59,6 +71,7 @@ const toDetail = () => {
   font-size: 18px;
 }
 .right {
+  display: flex;
   margin-top: 10px;
   width: 400px;
 }
@@ -87,5 +100,8 @@ const toDetail = () => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.button {
+  padding: 20px 20px;
 }
 </style>

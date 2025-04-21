@@ -5,15 +5,17 @@ import { useAccountStore } from '@/stores/account'
 import { ElMessage } from 'element-plus'
 import { ref } from 'vue'
 const accont = useAccountStore()
-const selectedPaper = ref(null)
+const selectedPapers = ref(null)
+const isLoading = ref(true)
 const loadSelectedPaper = () => {
   selectSelectedPaper(accont.accountInfo.id).then((res) => {
     if (res.code === '200') {
-      selectedPaper.value = res.data
-      console.log(selectedPaper.value)
+      selectedPapers.value = res.data
+      console.log(selectedPapers.value)
     } else {
       ElMessage.error(res.msg)
     }
+    isLoading.value = false
   })
 }
 loadSelectedPaper()
@@ -21,8 +23,14 @@ loadSelectedPaper()
 
 <template>
   <div class="student-select">
-    <div class="paper-box" v-if="selectedPaper.id !== null">
-      <paper-student-shower :paper="selectedPaper" />
+    <div v-if="isLoading">加载中...</div>
+    <div class="paper-box" v-else-if="selectedPapers.length !== 0">
+      <paper-student-shower
+        v-for="paper in selectedPapers"
+        :key="paper.id"
+        :paper="paper"
+        :toChat="true"
+      />
     </div>
     <div v-else>
       <el-empty description="您还没有选择论文" />

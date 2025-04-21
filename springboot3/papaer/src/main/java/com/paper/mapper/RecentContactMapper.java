@@ -22,6 +22,8 @@ public interface RecentContactMapper {
     List<RecentContact> selectByUserAndContact(RecentContact recentContact);
 
     List<RecentContact> selectAllByUserId(RecentContact recentContact);
+
+    List<RecentContact> selectByPaperId(RecentContact recentContact);
 }
 
 

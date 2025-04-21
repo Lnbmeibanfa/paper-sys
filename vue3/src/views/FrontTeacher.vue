@@ -14,9 +14,6 @@ const quit = () => {
     router.push({ name: 'login' })
   })
 }
-const toChat = () => {
-  router.push('/teacher/chat')
-}
 </script>
 
 <template>
@@ -40,11 +37,11 @@ const toChat = () => {
         >
           <el-menu-item index="/teacher/home">首页</el-menu-item>
           <el-menu-item index="/teacher/paper">论文管理</el-menu-item>
+          <el-menu-item index="/teacher/chat">学生沟通</el-menu-item>
         </el-menu>
       </nav>
       <div class="account">
         <div class="account-box">
-          <el-icon class="message" @click="toChat"><Bell /></el-icon>
           <div class="user">
             <img
               :src="

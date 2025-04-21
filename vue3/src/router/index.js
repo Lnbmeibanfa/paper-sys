@@ -54,6 +54,7 @@ const router = createRouter({
     {
       path: '/teacher',
       name: 'teacher',
+      redirect: '/teacher/home',
       component: () => import('@/views/FrontTeacher.vue'),
       children: [
         {
@@ -107,11 +108,6 @@ const router = createRouter({
           path: 'select',
           component: () => import('@/views/student/StudentSelect.vue'),
           name: 'studentSelect',
-        },
-        {
-          path: 'papers',
-          component: () => import('@/views/student/StudentPapers.vue'),
-          name: 'papers',
         },
       ],
     },

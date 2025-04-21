@@ -52,9 +52,20 @@
             <if test="selectable != null">selectable = #{selectable}</if>
         </set>
         <where>
-            (user_id = #{userId} and user_role = #{userRole})
-            or
-            (contact_id = #{userId} and contact_role = #{userRole})
+            <if test="userId != null and userRole != null and contactId != null and contactRole != null and paperId != null">
+                ((user_id = #{userId} and user_role = #{userRole})
+                and
+                (contact_id = #{contactId} and contact_role = #{contactRole})
+                and
+                paper_id = #{paperId}
+                )
+                or
+                ((contact_id = #{userId} and contact_role = #{userRole})
+                and
+                (user_id = #{contactId} and user_role = #{contactRole})
+                and paper_id = #{paperId}
+                )
+            </if>
         </where>
     </update>
     <select id="selectByUserAndContact" resultType="com.paper.entity.RecentContact">
@@ -63,14 +74,18 @@
         FROM `recent_contact`
         -- 按创建时间降序排序，最新的消息在前面
         <where>
-            <if test="userId != null">
+            <if test="userId != null and userRole != null and contactId != null and contactRole != null and paperId != null">
                 ((user_id = #{userId} and user_role = #{userRole})
                 and
-                (contact_id = #{contactId} and contact_role = #{contactRole}))
+                (contact_id = #{contactId} and contact_role = #{contactRole})
+                and paper_id = #{paperId}
+                )
                 or
                 ((user_id = #{contactId} and user_role = #{contactRole})
                 and
-                (contact_id = #{userId} and contact_role = #{userRole}))
+                (contact_id = #{userId} and contact_role = #{userRole})
+                and paper_id = #{paperId}
+               )
             </if>
         </where>
     </select>
@@ -85,5 +100,13 @@
             </if>
         </where>
         order by last_active desc
+    </select>
+    <select id="selectByPaperId" resultType="com.paper.entity.RecentContact">
+        select * from `recent_contact`
+        <where>
+            <if test="paperId != null">
+                paper_id = #{paperId}
+            </if>
+        </where>
     </select>
 </mapper>

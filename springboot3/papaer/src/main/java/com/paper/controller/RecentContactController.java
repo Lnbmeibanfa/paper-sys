@@ -18,6 +18,15 @@ public class RecentContactController {
     RecentContactService recentContactService;
 
     /**
+     * 添加新的rc
+     */
+    @PutMapping("/add")
+    public Result add(@RequestBody RecentContact recentContact) {
+        recentContactService.add(recentContact);
+        return Result.success();
+    }
+
+    /**
      * 分页查询RecentContact
      */
     @GetMapping("/selectByPage")
@@ -30,6 +39,7 @@ public class RecentContactController {
 
     @PutMapping("/author")
     public Result author (@RequestBody RecentContact recentContact) {
+
         recentContactService.author(recentContact);
         return Result.success();
     }

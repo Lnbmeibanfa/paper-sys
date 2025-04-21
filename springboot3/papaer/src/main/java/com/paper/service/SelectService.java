@@ -22,14 +22,17 @@ public class SelectService {
     SelectMapper selectMapper;
 
     public void add(Select select) {
-        List<Select> dbSelect = selectMapper.selectBySelect(select);
-        if (dbSelect.size() > 1) {
-            throw new CustomException(ResultCodeEnum.SYSTEM_ERROR);
+        Integer studentId = select.getStudentId();
+        List<Select> dbSelect = selectBySelect(new Select(studentId));
+        for (Select s : dbSelect) {
+            if (s.getPaperId().equals(select.getPaperId())) {
+                throw new CustomException("400", "您已经选择过改论文，无法重复选择");
+            }
         }
-        if (dbSelect.isEmpty()) {
-            selectMapper.add(select);
+        if (dbSelect.size() >= 5) {
+            throw new CustomException("400", "您最多只能选择五个论文");
         } else {
-            throw new CustomException("400", "您最多只能选择一个论文");
+            selectMapper.add(select);
         }
     }
 
@@ -39,15 +42,8 @@ public class SelectService {
         return PageInfo.of(list);
     }
 
-    public Select selectBySelect(Select select) {
-        List<Select> dbSelect = selectMapper.selectBySelect(select);
-        if (ObjectUtil.isEmpty(dbSelect)) {
-            return null;
-        }
-        if (dbSelect.size() > 1) {
-            throw new CustomException(ResultCodeEnum.SYSTEM_ERROR);
-        }
-        return dbSelect.getFirst();
+    public List<Select> selectBySelect(Select select) {
+        return selectMapper.selectBySelect(select);
     }
 
 

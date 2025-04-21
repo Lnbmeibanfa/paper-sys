@@ -2,22 +2,32 @@
 import { useRoute } from 'vue-router'
 import { selectPaperById, recommend } from '@/api/paper'
 import { addCollectAPI, deleteByCollectAPI, selectByCollectAPI } from '@/api/collect'
+import { selectBySelectAPI, addSelectAPI, deleteBySelectAPI } from '@/api/select'
+import { selectPaperDataAPI } from '@/api/paper'
 import RecommendPaperShower from '@/views/component/RecommendPaperShower.vue'
 import { ElMessage } from 'element-plus'
 import { onMounted, watch } from 'vue'
 import { ref } from 'vue'
 import { useAccountStore } from '@/stores/account'
-import router from '@/router'
 const accountInfo = useAccountStore()
 const route = useRoute()
+// 当前论文详细信息
 const paper = ref({})
 const recommendData = ref({})
+// 当前论文导师的其他论文
+const paperData = ref(null)
+// 当前论文是否已经被选择
+const hasSelect = ref(false)
 const isCollect = ref(false)
+const isSelect = ref(false)
 const loadPaperData = () => {
   selectPaperById(route.query.id).then((res) => {
     if (res.code === '200') {
       paper.value = res.data
       initIsCollect()
+      initIsSelect()
+      loadPapersData()
+      loadSelectData()
     } else {
       ElMessage.error(res.msg)
     }
@@ -27,6 +37,24 @@ const loadRecommendData = () => {
   recommend().then((res) => {
     if (res.code === '200') {
       recommendData.value = res.data
+    } else {
+      ElMessage.error(res.msg)
+    }
+  })
+}
+const loadPapersData = () => {
+  selectPaperDataAPI(null, null, paper.value.teacherId).then((res) => {
+    if (res.code === '200') {
+      paperData.value = res.data.list.slice(0, 3)
+    } else {
+      ElMessage.error(res.msg)
+    }
+  })
+}
+const loadSelectData = () => {
+  selectBySelectAPI(null, paper.value.id).then((res) => {
+    if (res.code === '200') {
+      hasSelect.value = res.data.length !== 0
     } else {
       ElMessage.error(res.msg)
     }
@@ -43,15 +71,23 @@ const initIsCollect = () => {
     }
   })
 }
+const initIsSelect = () => {
+  selectBySelectAPI(accountInfo.accountInfo.id, paper.value.id).then((res) => {
+    if (res.code === '200') {
+      if (res.data.length !== 0) {
+        isSelect.value = true
+      } else {
+        isSelect.value = false
+      }
+    }
+  })
+}
 watch(
   () => route.query.id,
   () => {
     loadPaperData()
   },
 )
-const communicate = () => {
-  router.push(`/student/chat?teacherId=${paper.value.teacherId}&paperId=${paper.value.id}`)
-}
 const toggleCollect = () => {
   isCollect.value = !isCollect.value
   if (isCollect.value) {
@@ -76,11 +112,32 @@ const toggleCollect = () => {
     })
   }
 }
-const toMorePaper = () => {
-  router.push(`/student/papers?teacherId=${paper.value.teacherId}`)
+const toggleSelect = () => {
+  isSelect.value = !isSelect.value
+  if (isSelect.value) {
+    const curSelect = {
+      studentId: accountInfo.accountInfo.id,
+      paperId: paper.value.id,
+    }
+    addSelectAPI(curSelect).then((res) => {
+      if (res.code === '200') {
+        ElMessage.success('添加成功!')
+      } else {
+        ElMessage.error(res.msg)
+      }
+    })
+  } else {
+    deleteBySelectAPI(accountInfo.accountInfo.id, paper.value.id).then((res) => {
+      if (res.code === '200') {
+        ElMessage.warning('已取消选择')
+      } else {
+        ElMessage.error(res.msg)
+      }
+    })
+  }
 }
+loadPaperData()
 onMounted(() => {
-  loadPaperData()
   loadRecommendData()
 })
 </script>
@@ -109,10 +166,43 @@ onMounted(() => {
           ><div v-if="isCollect">取消收藏</div>
           <div v-else>加入收藏</div></el-button
         >
-        <el-button type="success" plain icon="chatRound" @click="communicate">立即沟通</el-button>
+        <el-button
+          type="success"
+          :plain="!isSelect"
+          :icon="!isSelect ? 'Check' : 'Close'"
+          @click="toggleSelect"
+          ><div v-if="!isSelect">加入选择清单</div>
+          <div v-else>移出选择清单</div></el-button
+        >
       </div>
     </div>
     <main>
+      <div class="aside">
+        <div class="teacher-info-box">
+          <div class="info-title">教师基本信息</div>
+          <div class="info-box">
+            <div class="img-box"><img :src="paper.teacherAvatar" alt="" /></div>
+            <div class="direction">
+              <el-icon><User /></el-icon>
+              <div>{{ paper.teacherName }}</div>
+            </div>
+            <div class="direction">
+              <el-icon><Reading /></el-icon>
+              <div>{{ paper.teacherResearchDirection }}</div>
+            </div>
+            <div class="direction">
+              <el-icon><Location /></el-icon>
+              <div>{{ paper.teacherAddress }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="recommend">
+          <div class="info-title">该导师的其他论文</div>
+          <div class="recommends">
+            <recommend-paper-shower v-for="paper in paperData" :key="paper.id" :paper="paper" />
+          </div>
+        </div>
+      </div>
       <div class="paper-detail card">
         <div class="title">职位要求</div>
         <div class="tags-box">
@@ -153,30 +243,10 @@ onMounted(() => {
           {{ paper.requirement }}
         </div>
       </div>
+
       <div class="aside">
-        <div class="teacher-info-box">
-          <div class="info-title">教师基本信息</div>
-          <div class="info-box">
-            <div class="img-box"><img :src="paper.teacherAvatar" alt="" /></div>
-            <div class="direction">
-              <el-icon><User /></el-icon>
-              <div>{{ paper.teacherName }}</div>
-            </div>
-            <div class="direction">
-              <el-icon><Reading /></el-icon>
-              <div>{{ paper.teacherResearchDirection }}</div>
-            </div>
-            <div class="direction">
-              <el-icon><Location /></el-icon>
-              <div>{{ paper.teacherAddress }}</div>
-            </div>
-            <div class="button">
-              <el-button type="success" plain @click="toMorePaper">查看全部论文</el-button>
-            </div>
-          </div>
-        </div>
         <div class="recommend">
-          <div class="info-title">推荐职位</div>
+          <div class="info-title">其他推荐岗位</div>
           <div class="recommends">
             <recommend-paper-shower v-for="paper in recommendData" :key="paper.id" :paper="paper" />
           </div>
@@ -213,6 +283,7 @@ main {
 .paper-detail {
   flex: 1;
   padding: 20px;
+  margin: 0px 10px;
 }
 .title {
   font-size: 18px;
@@ -230,7 +301,6 @@ main {
   margin-right: 5px;
 }
 .aside {
-  margin-left: 10px;
   width: 300px;
 }
 .teacher-info-box {

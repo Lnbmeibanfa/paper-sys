@@ -132,19 +132,18 @@ public class PaperService {
      * @param paper 学生id，论文id
      * @return paper
      */
-    public Paper selectSelectedPaper(Paper paper) {
+    public List<Paper> selectSelectedPaper(Paper paper) {
         Integer studentId = paper.getStudentId();
         if (ObjectUtil.isEmpty(studentId)) {
             throw new CustomException(ResultCodeEnum.PARAM_LOST_ERROR);
         }
-        Select dbSelect = selectService.selectBySelect(new Select(studentId));
-        if (ObjectUtil.isNull(dbSelect)) {
-            return new Paper();
+        List<Select> dbSelect = selectService.selectBySelect(new Select(studentId));
+        List<Paper> res = new ArrayList<>();
+        for (Select sel : dbSelect) {
+            Paper dbpaper = selectById(new Paper(sel.getPaperId(), null));
+            res.add(dbpaper);
         }
-        if (ObjectUtil.isEmpty(dbSelect.getPaperId())) {
-            throw new CustomException(ResultCodeEnum.PARAM_LOST_ERROR);
-        }
-        return selectById(new Paper(dbSelect.getPaperId(), null));
+        return res;
     }
 
     /**
@@ -194,10 +193,10 @@ public class PaperService {
         // 把list里的id变成position
         List<Paper> result = papers.stream().filter(x -> paperIds.contains(x.getId())).toList();
         if (CollectionUtil.isEmpty(result)) {
-            result = getRandomPaper(3, papers, result);
+            result = getRandomPaper(5, papers, result);
         }
         if (result.size() < 3) {
-            result = getRandomPaper(3 - result.size(), papers, result);
+            result = getRandomPaper(5 - result.size(), papers, result);
         }
         return result;
     }
