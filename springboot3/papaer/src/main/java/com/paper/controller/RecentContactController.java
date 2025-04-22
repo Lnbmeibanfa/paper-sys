@@ -37,11 +37,4 @@ public class RecentContactController {
         return Result.success(pageInfo);
     }
 
-    @PutMapping("/author")
-    public Result author (@RequestBody RecentContact recentContact) {
-
-        recentContactService.author(recentContact);
-        return Result.success();
-    }
-
 }

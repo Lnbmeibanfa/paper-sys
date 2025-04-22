@@ -54,11 +54,9 @@
         <where>
             <!-- 当 sendId 不为空时，筛选出 sendId 和 receiverId 相互匹配的记录 -->
             <if test="sendId != null">
-                (send_id = #{sendId} AND receiver_id = #{receiverId})
+                (send_id = #{sendId} and send_role = #{sendRole} AND receiver_id = #{receiverId} and receiver_role = #{receiverRole} and paper_id = #{paperId})
                 OR
-                (send_id = #{receiverId} AND receiver_id = #{sendId})
-                AND
-                (paper_id = #{paperId})
+                (send_id = #{receiverId} and send_role = #{receiverRole} AND receiver_id = #{sendId} and receiver_role = #{sendRole} and paper_id = #{paperId})
             </if>
         </where>
         ORDER BY create_time desc

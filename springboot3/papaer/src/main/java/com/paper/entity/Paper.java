@@ -42,10 +42,13 @@ public class Paper {
     private String keyword;
     // 是否添加收藏筛选条件
     private Boolean onlyShowCollect;
+    // 该论文是否要被选择
+    private Boolean isSelect;
     public  Paper() {
     }
-    public Paper(Integer id, Integer teacherId) {
+    public Paper(Integer id, Integer teacherId, Integer studentId) {
         this.id = id;
         this.teacherId = teacherId;
+        this.studentId = studentId;
     }
 }

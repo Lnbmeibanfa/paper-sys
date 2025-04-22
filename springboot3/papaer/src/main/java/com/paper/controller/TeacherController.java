@@ -82,7 +82,7 @@ public class TeacherController {
      */
     @GetMapping("/selectPaperById")
     public Result selectPaperById(Integer id) {
-        List<Paper> papers = paperService.selectByFilter(new Paper(null, id));
+        List<Paper> papers = paperService.selectByFilter(new Paper(null, id, null));
         return Result.success(papers.size());
     }
 }

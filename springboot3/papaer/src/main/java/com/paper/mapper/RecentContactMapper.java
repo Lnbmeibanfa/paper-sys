@@ -17,8 +17,6 @@ public interface RecentContactMapper {
 
     void update(RecentContact recentContact);
 
-    void updateSelectable(RecentContact recentContact);
-
     List<RecentContact> selectByUserAndContact(RecentContact recentContact);
 
     List<RecentContact> selectAllByUserId(RecentContact recentContact);

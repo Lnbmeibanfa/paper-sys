@@ -2,7 +2,8 @@
 import SessionContacts from '../component/SessionContacts.vue'
 import SessionMessage from '../component/SessionMessage.vue'
 import { selectMessageDataAPI } from '@/api/message'
-import { selectRecentContactDataAPI, authorSelectAPI } from '@/api/recentContact'
+import { selectRecentContactDataAPI } from '@/api/recentContact'
+import { confirmPaper } from '@/api/paper'
 import chat from '@/utils/chat'
 import '@wangeditor/editor/dist/css/style.css'
 import { onBeforeUnmount, ref, shallowRef } from 'vue'
@@ -54,7 +55,9 @@ const loadMessageData = () => {
     pageNum.value,
     pageSize.value,
     accountInfo.accountInfo.id,
+    accountInfo.accountInfo.role,
     curSession.value.contactId,
+    curSession.value.contactRole,
     curSession.value.paperId,
   ).then((res) => {
     if (res.code === '200') {
@@ -125,36 +128,30 @@ chat.onmessage = () => {
 }
 /**允许学生选择该论文 */
 const authorSelect = () => {
-  const rc = {
-    selectable: true,
-    userId: accountInfo.accountInfo.id,
-    userRole: accountInfo.accountInfo.role,
-    contactId: curSession.value.contactId,
-    contactRole: curSession.value.contactRole,
-    paperId: curSession.value.paperId,
+  const paper = {
+    studentId: curSession.value.contactId,
+    id: curSession.value.paperId,
+    isSelect: true,
   }
-  authorSelectAPI(rc).then((res) => {
+  confirmPaper(paper).then((res) => {
     if (res.code === '200') {
       ElMessage.success('已允许该学生选择论文')
-      curSession.value.selectable = true
+      curSession.value.isSelect = true
     } else {
       ElMessage.error(res.msg)
     }
   })
 }
 const recusalSelect = () => {
-  const rc = {
-    selectable: false,
-    userId: accountInfo.accountInfo.id,
-    userRole: accountInfo.accountInfo.role,
-    contactId: curSession.value.contactId,
-    contactRole: curSession.value.contactRole,
+  const paper = {
+    studentId: curSession.value.contactId,
     paperId: curSession.value.paperId,
+    isSelect: false,
   }
-  authorSelectAPI(rc).then((res) => {
+  confirmPaper(paper).then((res) => {
     if (res.code === '200') {
       ElMessage.success('已取消该学生选择论文')
-      curSession.value.selectable = false
+      curSession.value.isSelect = false
     } else {
       ElMessage.error(res.msg)
     }
@@ -204,7 +201,7 @@ const recusalSelect = () => {
             type="warning"
             v-show="curSession.paperId !== null"
             @click="recusalSelect"
-            v-if="curSession.selectable"
+            v-if="curSession.isSelect"
             >取消选择该同学</el-button
           >
           <el-button
@@ -269,5 +266,8 @@ const recusalSelect = () => {
 }
 .send-btn {
   float: right;
+}
+.bd-btm {
+  border-bottom: 1px solid #e4e4e4;
 }
 </style>

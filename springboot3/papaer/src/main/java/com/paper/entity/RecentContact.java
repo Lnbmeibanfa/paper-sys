@@ -30,7 +30,7 @@ public class RecentContact {
     private String teacherWechat;
     private String teacherQq;
     private String paperName;
-    private Boolean selectable;
+    private Boolean isSelect;
 
     public static RecentContact messageToRecentContact(Message message) {
         RecentContact recentContact = new RecentContact();
@@ -45,6 +45,10 @@ public class RecentContact {
     }
 
     public RecentContact() {}
+
+    public RecentContact(Integer paperId) {
+        this.paperId = paperId;
+    }
 
     public void addStudentData (Student student) {
         this.studentName = student.getName();

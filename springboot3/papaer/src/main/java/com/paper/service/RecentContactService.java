@@ -38,8 +38,6 @@ public class RecentContactService {
 
     @Resource
     PaperService paperService;
-    @Autowired
-    private JWTUtil jWTUtil;
 
     public void updateOrAdd(RecentContact recentContact) {
         Integer userId = recentContact.getUserId();
@@ -74,6 +72,7 @@ public class RecentContactService {
         List<RecentContact> list = recentContactMapper.selectAllByUserId(recentContact);
         keepRoleConsistent(list);
         addExtraInfo(list);
+        decorateRecentContact(list);
         return PageInfo.of(list);
     }
 
@@ -135,15 +134,7 @@ public class RecentContactService {
         }
     }
 
-    public void author(RecentContact recentContact) {
-        List<RecentContact> dbRC = recentContactMapper.selectByPaperId(recentContact);
-        for (RecentContact rc : dbRC) {
-            if (rc.getSelectable()) {
-                throw new CustomException("400", "该论文已经被选择！");
-            }
-        }
-        recentContactMapper.updateSelectable(recentContact);
-    }
+
 
     public RecentContact selectRCByKey(RecentContact recentContact) {
         List<RecentContact> dbRC = recentContactMapper.selectByUserAndContact(recentContact);
@@ -155,4 +146,11 @@ public class RecentContactService {
             return dbRC.getFirst();
         }
     }
+
+    private void decorateRecentContact(List<RecentContact> recentContacts) {
+        for (RecentContact rc : recentContacts) {
+            rc.setIsSelect(paperService.judgePaperIsSelect(rc.getPaperId()));
+        }
+    }
+
 }

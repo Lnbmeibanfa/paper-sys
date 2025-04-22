@@ -1,4 +1,5 @@
 <script setup>
+import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -10,7 +11,11 @@ const paperData = defineProps({
   },
 })
 const toDetail = () => {
-  router.push(`/student/detail?id=${paperData.paper.id}`)
+  if (paperData.paper.studentId != null) {
+    ElMessage.warning('论文已被选择请浏览其他论文')
+  } else {
+    router.push(`/student/detail?id=${paperData.paper.id}`)
+  }
 }
 const chat = () => {
   router.push(`/student/chat?paperId=${paperData.paper.id}&teacherId=${paperData.paper.teacherId}`)
@@ -46,7 +51,9 @@ const chat = () => {
         <div class="requirment">{{ paper.requirement }}</div>
       </div>
       <div class="button" v-if="toChat">
-        <el-button type="primary" @click="chat">发起沟通</el-button>
+        <el-button type="primary" @click="chat" :disabled="paperData.paper.studentId != null"
+          >发起沟通</el-button
+        >
       </div>
     </div>
   </div>

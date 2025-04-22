@@ -49,6 +49,13 @@ const recommend = () => {
   return request.get('/paper/recommend')
 }
 
+/**
+ * 确定/取消论文的人选
+ */
+const confirmPaper = (paper) => {
+  return request.put('/paper/confirmPaper', paper)
+}
+
 export {
   addPaperAPI,
   selectPaperDataAPI,
@@ -59,4 +66,5 @@ export {
   selectPaperById,
   selectSelectedPaper,
   recommend,
+  confirmPaper,
 }

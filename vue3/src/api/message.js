@@ -1,8 +1,16 @@
 import request from '@/utils/request.js'
 
-const selectMessageDataAPI = (pageNum, pageSize, sendId, receiverId, paperId) => {
+const selectMessageDataAPI = (
+  pageNum,
+  pageSize,
+  sendId,
+  sendRole,
+  receiverId,
+  receiverRole,
+  paperId,
+) => {
   return request.get('/message/selectByPage', {
-    params: { pageNum, pageSize, sendId, receiverId, paperId },
+    params: { pageNum, pageSize, sendId, sendRole, receiverId, receiverRole, paperId },
   })
 }
 

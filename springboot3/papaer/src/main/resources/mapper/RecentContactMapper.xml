@@ -34,7 +34,6 @@
             <if test="lastMessage != null">last_message = #{lastMessage},</if>
             <if test="lastActive != null">last_active = #{lastActive},</if>
             <if test="paperId != null">paper_id = #{paperId},</if>
-            <if test="selectable != null">selectable = #{selectable}</if>
         </set>
         <where>
             <if test="userId != null and contactId != null">
@@ -46,28 +45,6 @@
         </where>
     </update>
 
-    <update id="updateSelectable">
-        update `recent_contact`
-        <set>
-            <if test="selectable != null">selectable = #{selectable}</if>
-        </set>
-        <where>
-            <if test="userId != null and userRole != null and contactId != null and contactRole != null and paperId != null">
-                ((user_id = #{userId} and user_role = #{userRole})
-                and
-                (contact_id = #{contactId} and contact_role = #{contactRole})
-                and
-                paper_id = #{paperId}
-                )
-                or
-                ((contact_id = #{userId} and contact_role = #{userRole})
-                and
-                (user_id = #{contactId} and user_role = #{contactRole})
-                and paper_id = #{paperId}
-                )
-            </if>
-        </where>
-    </update>
     <select id="selectByUserAndContact" resultType="com.paper.entity.RecentContact">
         -- 查询 send 和 receiver 之间的对话，按创建时间降序排列
         SELECT *

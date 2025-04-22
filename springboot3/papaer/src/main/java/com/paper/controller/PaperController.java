@@ -98,4 +98,13 @@ public class PaperController {
     public Result recommend() {
         return Result.success(paperService.recommend());
     }
+
+    /**
+     * 确认/取消论文的选择对象
+     */
+    @PutMapping("/confirmPaper")
+    public Result confirmPaper(@RequestBody Paper paper) {
+        paperService.confirmStudent(paper);
+        return Result.success();
+    }
 }

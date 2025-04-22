@@ -3,9 +3,7 @@ import SessionContacts from '../component/SessionContacts.vue'
 import SessionMessage from '../component/SessionMessage.vue'
 import { selectMessageDataAPI } from '@/api/message'
 import { selectSelectedPaper } from '@/api/paper'
-import { authorSelectAPI } from '@/api/recentContact'
 import { selectRecentContactDataAPI, addRecentContactAPI } from '@/api/recentContact'
-import { addSelectAPI, deleteBySelectAPI } from '@/api/select'
 import chat from '@/utils/chat'
 import '@wangeditor/editor/dist/css/style.css'
 import { onBeforeUnmount, ref, shallowRef } from 'vue'
@@ -14,7 +12,7 @@ import { useAccountStore } from '@/stores/account'
 import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { reactive } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 const pageNum = ref(1)
 const pageSize = ref(10)
 const route = useRoute()
@@ -60,7 +58,9 @@ const loadMessageData = () => {
     pageNum.value,
     pageSize.value,
     accountInfo.accountInfo.id,
+    accountInfo.accountInfo.role,
     curSession.value.contactId,
+    curSession.value.contactRole,
     curSession.value.paperId,
   ).then((res) => {
     if (res.code === '200') {
@@ -160,55 +160,6 @@ const sendMsg = () => {
 chat.onmessage = () => {
   loadMessageData()
 }
-const selectPaper = () => {
-  ElMessageBox.confirm('你只能选择一个论文，确认选择？', '确认选择', {
-    confirmButtonText: '确认',
-    cancelButtonText: '取消',
-    type: 'warning',
-  })
-    .then(() => {
-      addSelectAPI({
-        studentId: accountInfo.accountInfo.id,
-        paperId: curSession.value.paperId,
-      }).then((res) => {
-        if (res.code === '200') {
-          ElMessage.success('已经成功选择！')
-        } else {
-          ElMessage.error(res.msg)
-        }
-      })
-    })
-    .catch((err) => console.log(err))
-}
-const delSelect = () => {
-  ElMessageBox.confirm('撤销后无法重新选择，且需要教师重新开启选择权限，确认撤销？', '确认撤销', {
-    confirmButtonText: '确认',
-    cancelButtonText: '取消',
-    type: 'warning',
-  })
-    .then(() => {
-      const rc = {
-        selectable: false,
-        userId: accountInfo.accountInfo.id,
-        userRole: accountInfo.accountInfo.role,
-      }
-      deleteBySelectAPI(accountInfo.accountInfo.id, curSession.value.paperId).then((res) => {
-        if (res.code === '200') {
-          ElMessage.success('撤销选择成功')
-        } else {
-          ElMessage.error(res.msg)
-        }
-      })
-      authorSelectAPI(rc).then((res) => {
-        if (res.code === '200') {
-          ElMessage.success('已经撤销选择权')
-        } else {
-          ElMessage.error(res.msg)
-        }
-      })
-    })
-    .catch((err) => console.log(err))
-}
 </script>
 
 <template>
@@ -250,15 +201,6 @@ const delSelect = () => {
           />
         </div>
         <div class="button-container">
-          <el-button type="primary" @click="selectPaper" v-show="curSession.selectable"
-            >选择该论文</el-button
-          >
-          <el-button
-            type="warning"
-            @click="delSelect"
-            v-show="selectedPaper !== null && curSession.paperId === selectedPaper.id"
-            >撤销选择该论文</el-button
-          >
           <el-button class="send-btn" type="success" @keydown.enter="sendMsg" @click="sendMsg"
             >发送</el-button
           >

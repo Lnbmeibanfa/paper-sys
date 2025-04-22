@@ -111,7 +111,16 @@ public class PaperService {
      * @return paper
      */
     public List<Paper> selectByFilter(Paper paper) {
-        return paperMapper.selectByFilter(paper);
+        List<Paper> papers =  paperMapper.selectByFilter(paper);
+        List<Paper> res = new ArrayList<>();
+        for (Paper pap : papers) {
+            if (pap.getStudentId() == null) {
+                res.add(pap);
+            } else if (pap.getStudentId() == 0) {
+                res.add(pap);
+            }
+        }
+        return res;
     }
 
     /**
@@ -140,7 +149,7 @@ public class PaperService {
         List<Select> dbSelect = selectService.selectBySelect(new Select(studentId));
         List<Paper> res = new ArrayList<>();
         for (Select sel : dbSelect) {
-            Paper dbpaper = selectById(new Paper(sel.getPaperId(), null));
+            Paper dbpaper = selectById(new Paper(sel.getPaperId(), null, null));
             res.add(dbpaper);
         }
         return res;
@@ -206,5 +215,26 @@ public class PaperService {
             papers = papers.stream().filter(x -> !result.contains(x)).collect(Collectors.toList());
         }
         return papers.size() > num ? papers.subList(0, num) : papers;
+    }
+
+    /**
+     * 确定论文人选
+     * @param paper paper
+     */
+    public void confirmStudent(Paper paper) {
+        if (paper.getIsSelect()) {
+            paperMapper.update(paper);
+        } else {
+            paper.setStudentId(0);
+            paperMapper.update(paper);
+        }
+    }
+
+    /**
+     * 确定改论文是否已经被选择
+     */
+    public Boolean judgePaperIsSelect(Integer paperId) {
+        Paper paper = selectById(new Paper(paperId, null, null));
+        return paper.getStudentId() != null;
     }
 }

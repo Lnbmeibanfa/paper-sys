@@ -64,7 +64,7 @@ const enterSession = () => {
       <div class="last-active">
         <div>{{ formatDate }}</div>
         <div>
-          <el-tag type="success" v-if="session.selectable">已选择</el-tag>
+          <el-tag type="success" v-if="session.isSelect">已选择</el-tag>
           <el-tag type="info" v-else>沟通中</el-tag>
         </div>
       </div>
@@ -76,7 +76,7 @@ const enterSession = () => {
       <div class="info-box">
         <div>{{ session.studentName }}</div>
         <div>
-          <el-tag type="success" v-if="session.selectable">已选择</el-tag>
+          <el-tag type="success" v-if="session.isSelect">已选择</el-tag>
           <el-tag type="info" v-else>沟通中</el-tag>
         </div>
       </div>
